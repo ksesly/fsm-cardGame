@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'Star Jedi';
     /* src: url('/public/assets/fonts/jed/StarJedi/StarJedi.eot'); */
-    src: url('/public/assets/fonts/jed/StarJedi/StarJedi.eot') format('embedded-opentype'),
-         url('/public/assets/fonts/jed/StarJedi/StarJedi.woff2') format('woff2'),
-         url('/public/assets/fonts/jed/StarJedi/StarJedi.woff') format('woff'),
-         url('/public/assets/fonts/jed/StarJedi/StarJedi.ttf') format('truetype');
+    src: url('../assets/fonts/jed/StarJedi/StarJedi.eot') format('embedded-opentype'),
+         url('../assets/fonts/jed/StarJedi/StarJedi.woff2') format('woff2'),
+         url('../assets/fonts/jed/StarJedi/StarJedi.woff') format('woff'),
+         url('../assets/fonts/jed/StarJedi/StarJedi.ttf') format('truetype');
   }
 
 html, body {
