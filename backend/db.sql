@@ -9,5 +9,18 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL,
     role VARCHAR(100) DEFAULT 'user',
+    PRIMARY KEY(id),
     UNIQUE KEY unique_email (email)
 );
+
+CREATE TABLE IF NOT EXISTS `card` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`image` varchar(200) NOT NULL,
+	`title` varchar(50) NOT NULL,
+	`description` varchar(100) NOT NULL,
+	`cost` INT NOT NULL,
+	`damage` INT NOT NULL,
+	`defence` INT NOT NULL,
+	PRIMARY KEY (`id`)
+);
+
