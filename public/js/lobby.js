@@ -7,7 +7,6 @@ function createLobby() {
         const navDivButton = lobbyNavigation.appendChild(
             document.createElement("div")
         );
-        // navDivButton
         navDivButton.className = "nav-div-button";
         const button = document.createElement("button");
         button.id = i.toLowerCase() + "-button";
@@ -20,3 +19,18 @@ function createLobby() {
 }
 
 createLobby();
+
+const buttons = [...document.getElementsByTagName('button')];
+buttons.forEach(i => {
+    i.addEventListener("click", () => {
+        if (i.id === "start-button")
+            location.replace("./createBattle.html");
+        else if (i.id === "tutorial-button")
+            location.replace("./tutorial.html");
+        else if (i.id === "settings-button")
+            location.replace("./settings.html");
+        else if (i.id === "exit-button")
+            location.replace("./exit.html");
+    
+    })
+})
