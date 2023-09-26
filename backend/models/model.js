@@ -36,22 +36,19 @@ class Model {
 		return false;
 	}
 	async save() {
-		try {
-			let updateList = Object.assign({}, this);
+		let updateList = Object.assign({}, this);
 
-			delete updateList.tableName;
-			const columns = Object.keys(updateList).join(', ');
-			const values = Object.values(updateList).map((val) => `'${val}'`);
-
-			if (this.id && this.find(this.id)) {
-				await pool.execute(`UPDATE ${this.tableName} SET ${updateList} WHERE id=${this.id}`);
-			} else {
-				await pool.execute(`INSERT INTO ${this.tableName} (${columns}) VALUES (${values})`);
-			}
-			return true;
-		} catch (e) {
-			return e;
+		delete updateList.tableName;
+		const columns = Object.keys(updateList).join(', ');
+		const values = Object.values(updateList).map((val) => `'${val}'`);
+		console.log(updateList);
+		if (this.id && this.find(this.id)) {
+			await pool.execute(`UPDATE ${this.tableName} SET ${updateList} WHERE id=${this.id}`);
+		} else {
+			console.log('Insering');
+			await pool.execute(`INSERT INTO ${this.tableName} (${columns}) VALUES (${values})`);
 		}
+		return true;
 	}
 }
 

@@ -5,18 +5,18 @@ const app = express();
 const User = require('./models/user');
 const protected = require('./protected');
 
+const userRouter = require('./routes/userRoutes');
 app.use(express.json());
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.get('/style.css', (req, res) => {
-// 	res.sendFile(__dirname + '/public/style.css');
+app.use('/api/v1/users', userRouter);
+
+// app.route('/').get((req, res) => {
+// 	res.end('Hello World!');
 // });
-app.route('/').get((req, res) => {
-	res.end('Hello World!');
-});
 
 app.all('*', (req, res) => {
 	res.render(__dirname + '/views/error.html', {
