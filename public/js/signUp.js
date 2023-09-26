@@ -36,6 +36,12 @@ function createSignUp() {
     signUpButton.className = "sign-up-button";
     signUpButton.textContent = "sign up"
     signUpDiv.appendChild(signUpButton);
+
+    const signInLink = document.createElement('a');
+    signInLink.setAttribute("href", "./signIn.html");
+    signInLink.textContent = "already sign up?";
+
+    signUpDiv.appendChild(signInLink);
     
 }
 

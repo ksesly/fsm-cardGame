@@ -31,6 +31,5 @@ buttons.forEach(i => {
             location.replace("./settings.html");
         else if (i.id === "exit-button")
             location.replace("./exit.html");
-    
     })
 })
