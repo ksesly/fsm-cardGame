@@ -20,10 +20,10 @@ app.use('/api/v1/users', userRouter);
 // 	res.end('Hello World!');
 // });
 
-// app.all('*', (req, res) => {
-// 	res.render(__dirname + '/views/error.html', {
-// 		error: `Can't find ${req.originalUrl} on this server :# Please use only /login /register /homepage /reminder`,
-// 	});
-// });
+app.all('*', (req, res) => {
+	res.render(__dirname + '/views/error.html', {
+		error: `Can't find ${req.originalUrl} on this server :# Please use only /login /register /homepage /reminder`,
+	});
+});
 
 module.exports = app;

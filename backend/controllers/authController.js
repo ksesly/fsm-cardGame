@@ -22,6 +22,7 @@ const createSendToken = (user, statucCode, res) => {
 };
 
 exports.register = catchAsync(async (req, res, next) => {
+	console.log('Trying to reg ' + req.body);
 	const newUser = await new User({
 		login: req.body.login,
 		email: req.body.email,
