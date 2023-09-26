@@ -1,5 +1,5 @@
 function createSignUp() {
-    const mySignUp = document.querySelector('.signUp');
+    const mySignUp = document.querySelector('.sign-up');
     const signUpForm = mySignUp.appendChild(document.createElement("form"));
     signUpForm.className = "sign-up-form";
     const signUpLabel = signUpForm.appendChild(document.createElement("div"));
@@ -18,7 +18,7 @@ function createSignUp() {
             name: i.toLowerCase(),
             type: i.toLowerCase(),
             class: "input-field", 
-            id: i.toLowerCase() + "-button"
+            id: i.toLowerCase() + "-input"
         }
         Object.keys(attributes).forEach(attr => {
             if (attributes[attr] === "login" && inputField === "Login")
@@ -46,18 +46,3 @@ function createSignUp() {
 }
 
 createSignUp();
-
-// const buttons = [...document.getElementsByTagName('button')];
-// buttons.forEach(i => {
-//     i.addEventListener("click", () => {
-//         if (i.id === "start-button")
-//             location.replace("./createBattle.html");
-//         else if (i.id === "tutorial-button")
-//             location.replace("./tutorial.html");
-//         else if (i.id === "settings-button")
-//             location.replace("./settings.html");
-//         else if (i.id === "exit-button")
-//             location.replace("./exit.html");
-    
-//     })
-// })
