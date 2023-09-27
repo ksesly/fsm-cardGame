@@ -20,7 +20,7 @@ function createSignUp() {
 			name: i.toLowerCase(),
 			type: i.toLowerCase(),
 			class: 'input-field',
-			id: i.toLowerCase() + '-button',
+			id: i.toLowerCase() + '-input',
 		};
 		Object.keys(attributes).forEach((attr) => {
 			if (attributes[attr] === 'login' && inputField === 'Login') inputField.setAttribute('type', 'text');
@@ -28,6 +28,20 @@ function createSignUp() {
 		});
 		divField.appendChild(labelForField);
 		divField.appendChild(inputField);
+		if (i === 'Login') {
+			const errorField =  divField.appendChild(
+				document.createElement('span'));
+			errorField.className = 'error-field';
+			errorField.id = 'error-login';
+			errorField.textContent = '';
+		}
+		else if (i === 'Password') {
+			const errorField =  divField.appendChild(
+				document.createElement('span'));
+			errorField.className = 'error-field';
+			errorField.id = 'error-password'
+			errorField.textContent = '';
+		}
 		signUpDiv.appendChild(divField);
 	});
 
@@ -46,17 +60,28 @@ function createSignUp() {
 
 createSignUp();
 
-// const buttons = [...document.getElementsByTagName('button')];
-// buttons.forEach(i => {
-//     i.addEventListener("click", () => {
-//         if (i.id === "start-button")
-//             location.replace("./createBattle.html");
-//         else if (i.id === "tutorial-button")
-//             location.replace("./tutorial.html");
-//         else if (i.id === "settings-button")
-//             location.replace("./settings.html");
-//         else if (i.id === "exit-button")
-//             location.replace("./exit.html");
+const loginInput = document.getElementById('login-input');
+const loginError = document.getElementById('error-login');
 
-//     })
-// })
+loginInput.addEventListener('input', (event) => {
+	const inputValue = event.target.value;
+	if (inputValue.includes('@')) {
+		loginError.textContent = 'cannot contain "@"';
+		event.preventDefault(); 
+	} else {
+		loginError.textContent = ''; 
+	}
+});
+
+const passwordInput = document.getElementById('password-input');
+const passwordError = document.getElementById('error-password');
+
+passwordInput.addEventListener('input', (event) => {
+	const inputValue = event.target.value;
+	if ((inputValue.length > 0 && inputValue.length < 3) || inputValue.length > 10) {
+		passwordError.textContent = '3 < password < 10';
+		event.preventDefault();
+	}
+	else 
+		passwordError.textContent = '';
+});
