@@ -6,7 +6,7 @@ dotenv.config({ path: './config.env' });
 let clientAmount = 0;
 
 const server = app.listen(process.env.PORT, () => {
-	console.log(`App running on port ${process.env.PORT}`);
+	console.log(`App running on port 127.0.0.1:${process.env.PORT}`);
 });
 const io = require('socket.io')(server, {
 	cors: {
