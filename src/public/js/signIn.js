@@ -23,16 +23,14 @@ function createSignIn() {
 			id: i.toLowerCase() + '-input',
 		};
 		Object.keys(attributes).forEach((attr) => {
-			if (attributes[attr] === 'login or email')
-				inputField.setAttribute('name', 'login');
+			if (attributes[attr] === 'login or email') inputField.setAttribute('name', 'login');
 			else inputField.setAttribute(attr, attributes[attr]);
 		});
 
 		divField.appendChild(labelForField);
 		divField.appendChild(inputField);
-		if (i === 'Password'){
-			const errorField =  divField.appendChild(
-				document.createElement('span'));
+		if (i === 'Password') {
+			const errorField = divField.appendChild(document.createElement('span'));
 			errorField.className = 'error-field';
 			errorField.id = 'error-password';
 			errorField.textContent = '';
@@ -54,9 +52,7 @@ function createSignIn() {
 	signInDiv.appendChild(signUpLink);
 }
 
-
 createSignIn();
-
 
 const passwordInput = document.getElementById('password-input');
 const passwordError = document.getElementById('error-password');
@@ -68,8 +64,7 @@ passwordInput.addEventListener('input', (event) => {
 		passwordError.textContent = '3 < password < 10';
 		event.preventDefault();
 		signInButton.disabled = true;
-	}
-	else {
+	} else {
 		passwordError.textContent = '';
 		signInButton.disabled = false;
 	}
@@ -83,7 +78,7 @@ loginForm.addEventListener('submit', async (action) => {
 	try {
 		const formData = new FormData(loginForm);
 
-		const res = await fetch('/api/v1/users/register', {
+		const res = await fetch('/api/v1/users/login', {
 			method: 'POST',
 			body: JSON.stringify({
 				login: formData.get('login'),
@@ -103,7 +98,6 @@ loginForm.addEventListener('submit', async (action) => {
 			window.location.href = '/lobby';
 		}
 	} catch (error) {
-
 		console.error('Error:', error);
 	}
 });
