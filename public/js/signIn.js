@@ -43,6 +43,7 @@ function createSignIn() {
 	const signInButton = document.createElement('button');
 	signInButton.setAttribute('type', 'submit');
 	signInButton.className = 'sign-in-button';
+	signInButton.disabled = true;
 	signInButton.textContent = 'sign in';
 	signInDiv.appendChild(signInButton);
 
@@ -53,18 +54,24 @@ function createSignIn() {
 	signInDiv.appendChild(signUpLink);
 }
 
+
 createSignIn();
 
 
 const passwordInput = document.getElementById('password-input');
 const passwordError = document.getElementById('error-password');
+const signInButton = document.querySelector('.sign-in-button');
 
 passwordInput.addEventListener('input', (event) => {
 	const inputValue = event.target.value;
 	if ((inputValue.length > 0 && inputValue.length < 3) || inputValue.length > 10) {
 		passwordError.textContent = '3 < password < 10';
 		event.preventDefault();
+		signInButton.disabled = true;
 	}
-	else 
+	else {
 		passwordError.textContent = '';
+		signInButton.disabled = false;
+	}
 });
+
