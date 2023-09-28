@@ -75,3 +75,35 @@ passwordInput.addEventListener('input', (event) => {
 	}
 });
 
+const loginForm = document.querySelector('.sign-in-form');
+
+loginForm.addEventListener('submit', async (action) => {
+	action.preventDefault();
+
+	try {
+		const formData = new FormData(loginForm);
+
+		const res = await fetch('/api/v1/users/register', {
+			method: 'POST',
+			body: JSON.stringify({
+				login: formData.get('login'),
+				email: formData.get('email'),
+				password: formData.get('password'),
+			}),
+			headers: new Headers({
+				'Content-Type': 'application/json; charset=UTF-8',
+			}),
+		});
+
+		const data = await res.json();
+		console.log(data);
+		if (data.status === 'success') {
+			const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+			document.cookie = `authorization=Bearer ${data.token}; expires=${expirationDate.toUTCString()};path=/`;
+			window.location.href = '/lobby';
+		}
+	} catch (error) {
+
+		console.error('Error:', error);
+	}
+});
