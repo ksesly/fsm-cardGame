@@ -24,12 +24,12 @@ const buttons = [...document.getElementsByTagName('button')];
 buttons.forEach(i => {
     i.addEventListener("click", () => {
         if (i.id === "start-button")
-            location.replace("./createBattle.html");
+            location.replace("./createBattle");
         else if (i.id === "tutorial-button")
-            location.replace("./tutorial.html");
+            location.replace("./tutorial");
         else if (i.id === "settings-button")
-            location.replace("./settings.html");
+            location.replace("./settings");
         else if (i.id === "exit-button")
-            location.replace("./exit.html");
+            location.replace("./exit");
     })
 })

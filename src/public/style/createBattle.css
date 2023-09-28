@@ -14,7 +14,7 @@ html, body {
 }
 
 body {
-    background-image: url(../../backend/static/background3.png);
+    background-image: url(../assets/images/background3.png);
     background-size: cover;
     overflow: hidden;
 }
@@ -53,4 +53,17 @@ body {
     color: black;
     background-color: white;
     font-size: 19px;
+}
+
+.ready-button:disabled {
+    width: 200px; 
+    background-color: rgb(79, 79, 79);
+    color: white;
+    font-size: 16px; 
+}
+
+.cancel-button {
+    position: absolute; 
+    bottom: 10px; 
+    left: 10px; 
 }

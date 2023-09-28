@@ -49,7 +49,7 @@ function createSignUp() {
 	signUpDiv.appendChild(signUpButton);
 
 	const signInLink = document.createElement('a');
-	signInLink.setAttribute('href', '/api/v1/users/login');
+	signInLink.setAttribute('href', '/login');
 	signInLink.textContent = 'already sign up?';
 
 	signUpDiv.appendChild(signInLink);
