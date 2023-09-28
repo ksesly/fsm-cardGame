@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL,
     role VARCHAR(100) DEFAULT 'user',
-    PRIMARY KEY(id),
     UNIQUE KEY unique_email (email)
 );
 
