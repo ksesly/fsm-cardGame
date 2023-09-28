@@ -7,6 +7,8 @@ const User = require('./models/user');
 const protected = require('./protected');
 
 const userRouter = require('./routes/userRoutes');
+const lobbyRoutes = require('./routes/lobbyRoutes');
+
 app.use(express.static(__dirname + '/public/'));
 app.use(cors());
 app.use(express.json());
@@ -15,7 +17,7 @@ app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/v1/users', userRouter);
-
+app.use(lobbyRoutes);
 // app.route('/').get((req, res) => {
 // 	res.end('Hello World!');
 // });
