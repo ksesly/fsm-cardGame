@@ -14,7 +14,7 @@ html, body {
 }
 
 body {
-    background-image: url(../../backend/static/background1.png);
+    background-image: url(/../../assets/images/background1.png) ;
     background-size: cover;
     overflow: hidden;
 }

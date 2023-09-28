@@ -4,11 +4,15 @@ const User = require('./models/user');
 const AppError = require('./utils/appError');
 const { decode } = require('punycode');
 const protected = async (req, res, next) => {
-	if (req.headers.cookie.search(/authorization/) > 0) {
+	console.log(req.headers.cookie, req.headers.cookie.search(/authorization/));
+	
+	if (req.headers.cookie.search(/authorization/) >= 0) {
+		console.log('pupa');
 		req.headers['authorization'] = req.headers.cookie
 			.slice(req.headers.cookie.search('authorization'))
 			.replace('authorization=', '');
 	}
+	console.log(req.headers.authorization);
 	let token;
 	if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
 		token = req.headers.authorization.split(' ')[1];
