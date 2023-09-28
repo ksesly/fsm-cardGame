@@ -82,14 +82,14 @@ passwordInput.addEventListener('input', (event) => {
 	} else passwordError.textContent = '';
 });
 
-const loginForm = document.querySelector('.sign-up-form')
+const loginForm = document.querySelector('.sign-up-form');
 
 loginForm.addEventListener('submit', async (action) => {
 	action.preventDefault();
 
 	try {
 		const formData = new FormData(loginForm);
-		
+
 		const res = await fetch('/api/v1/users/register', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -105,11 +105,10 @@ loginForm.addEventListener('submit', async (action) => {
 		const data = await res.json();
 		console.log(data);
 		if (data.status === 'success') {
-			
 			const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
-			document.cookie = `authorization=Bearer ${data.token}; expires=${expirationDate.toUTCString()}`;
-			// window.location.href = '/ap1/v1/users/lobby';
-		} 
+			document.cookie = `authorization=Bearer ${data.token}; expires=${expirationDate.toUTCString()};path=/`;
+			window.location.href = '/ap1/v1/users/lobby';
+		}
 		// else errorDiv.innerHTML = data.message;
 	} catch (error) {
 		// errorDiv.innerHTML = error;
@@ -117,14 +116,8 @@ loginForm.addEventListener('submit', async (action) => {
 	}
 });
 
-
 const signUpButton = document.querySelector('.sign-up-button');
-
-
-
 
 // signUpButton.addEventListener("click", () => {
 //     location.replace("./lobby.html");
 // })
-
-

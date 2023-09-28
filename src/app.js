@@ -17,7 +17,9 @@ app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/v1/users', userRouter);
-app.use(lobbyRoutes);
+app.route('/lobby').get(protected, (req, res) => {
+	res.sendFile('lobby.html', { root: './public/views/' });
+});
 // app.route('/').get((req, res) => {
 // 	res.end('Hello World!');
 // });

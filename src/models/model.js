@@ -41,12 +41,12 @@ class Model {
 		delete updateList.tableName;
 		const columns = Object.keys(updateList).join(', ');
 		const values = Object.values(updateList).map((val) => `'${val}'`);
-		console.log(updateList);
 		if (this.id && this.find(this.id)) {
 			await pool.execute(`UPDATE ${this.tableName} SET ${updateList} WHERE id=${this.id}`);
 		} else {
 			console.log('Insering');
-			await pool.execute(`INSERT INTO ${this.tableName} (${columns}) VALUES (${values})`);
+			const id = await pool.execute(`INSERT INTO ${this.tableName} (${columns}) VALUES (${values})`);
+			this.id = id[0].insertId;
 		}
 		return true;
 	}

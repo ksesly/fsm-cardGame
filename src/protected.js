@@ -1,7 +1,8 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
-
+const AppError = require('./utils/appError');
+const { decode } = require('punycode');
 const protected = async (req, res, next) => {
 	if (req.headers.cookie.search(/authorization/) > 0) {
 		req.headers['authorization'] = req.headers.cookie
@@ -18,9 +19,10 @@ const protected = async (req, res, next) => {
 	const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
 	const freshUser = new User({ id: decoded.id });
-	await user.find(decoded.id);
+	console.log(token, decoded.id);
+	await freshUser.find(decoded.id);
 
-	if (!user.login) return next(new AppError('This user was deleted', 401));
+	if (!freshUser.login) return next(new AppError('This user was deleted', 401));
 
 	// if (freshUser.changedPasswordAfter(decoded.iat))
 	// 	return next(new AppError('User changed password. Please log in again.', 401));

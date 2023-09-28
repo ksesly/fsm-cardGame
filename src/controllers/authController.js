@@ -23,13 +23,17 @@ const createSendToken = (user, statucCode, res) => {
 
 exports.register = catchAsync(async (req, res, next) => {
 	console.log('Trying to reg ' + req.body);
-	const newUser = await new User({
+	const newUser = new User({
 		login: req.body.login,
 		email: req.body.email,
 		password: await bcrypt.hash(req.body.password, 12),
 		role: req.body.role || 'user',
-	}).save();
-	createSendToken(newUser._id, 201, res);
+	});
+	if (await newUser.save()) {
+		console.log(newUser);
+		console.log(newUser.id, '~~~~~~~~~~~~ id');
+		createSendToken(newUser.id, 201, res);
+	} else next(new AppError('Cant save it', 400));
 });
 
 exports.login = catchAsync(async (req, res, next) => {
