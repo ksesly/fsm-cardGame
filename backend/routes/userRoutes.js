@@ -1,6 +1,5 @@
 const express = require('express');
-const authController = require('../controllers/authController.js');
-
+const authController = require('../controllers/authController');
 const router = express.Router();
 
 router
@@ -13,7 +12,7 @@ router
 	.route('/login')
 	.post(authController.login)
 	.get((req, res) => {
-		res.sendFile(__dirname + '/../public/views/signIn.html');
+		res.sendFile('signIn.html', { root: './public/views/' });
 	});
 
 module.exports = router;
