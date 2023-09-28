@@ -3,6 +3,7 @@ function createSignUp() {
 	const signUpForm = mySignUp.appendChild(document.createElement('form'));
 	signUpForm.setAttribute('action', 'http://127.0.0.1:3000/api/v1/users/register');
 	signUpForm.setAttribute('method', 'POST');
+	signUpForm.setAttribute('name', 'sign-in-form');
 	signUpForm.className = 'sign-up-form';
 	const signUpLabel = signUpForm.appendChild(document.createElement('div'));
 	signUpLabel.textContent = 'sign up';
@@ -81,32 +82,47 @@ passwordInput.addEventListener('input', (event) => {
 	} else passwordError.textContent = '';
 });
 
-// loginForm.addEventListener('submit', async (action) => {
-// 	action.preventDefault();
+const loginForm = document.getElementsByName('sign-up-form');
 
-// 	try {
-// 		const formData = new FormData(loginForm);
+loginForm.addEventListener('submit', async (action) => {
+	action.preventDefault();
 
-// 		const res = await fetch('/api/v1/users/register', {
-// 			method: 'POST',
-// 			body: JSON.stringify({
-// 				login: formData.get('login'),
-// 				email: formData.get('email'),
-// 				password: formData.get('password'),
-// 			}),
-// 			headers: new Headers({
-// 				'Content-Type': 'application/json; charset=UTF-8',
-// 			}),
-// 		});
+	try {
+		const formData = new FormData(loginForm);
 
-// 		const data = await res.json();
-// 		if (data.status === 'success') {
-// 			const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
-// 			document.cookie = `authorization=Bearer ${data.token}; expires=${expirationDate.toUTCString()}`;
-// 			window.location.href = '/ap1/v1/users/lobby';
-// 		} else errorDiv.innerHTML = data.message;
-// 	} catch (error) {
-// 		errorDiv.innerHTML = error;
-// 		console.error('Error:', error);
-// 	}
-// });
+		const res = await fetch('/api/v1/users/register', {
+			method: 'POST',
+			body: JSON.stringify({
+				login: formData.get('login'),
+				email: formData.get('email'),
+				password: formData.get('password'),
+			}),
+			headers: new Headers({
+				'Content-Type': 'application/json; charset=UTF-8',
+			}),
+		});
+
+		const data = await res.json();
+		if (data.status === 'success') {
+			const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+			document.cookie = `authorization=Bearer ${data.token}; expires=${expirationDate.toUTCString()}`;
+			window.location.href = '/ap1/v1/users/lobby';
+		} 
+		// else errorDiv.innerHTML = data.message;
+	} catch (error) {
+		// errorDiv.innerHTML = error;
+		console.error('Error:', error);
+	}
+});
+
+
+const signUpButton = document.querySelector('.sign-up-button');
+
+
+
+
+// signUpButton.addEventListener("click", () => {
+//     location.replace("./lobby.html");
+// })
+
+
