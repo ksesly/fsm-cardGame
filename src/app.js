@@ -17,8 +17,21 @@ app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/v1/users', userRouter);
+
 app.route('/lobby').get(protected, (req, res) => {
 	res.sendFile('lobby.html', { root: './public/views/' });
+});
+app.route('/exit').get(protected, (req, res) => {
+	res.sendFile('exit.html', { root: './public/views/' });
+});
+app.route('/settings').get(protected, (req, res) => {
+	res.sendFile('settings.html', { root: './public/views/' });
+});
+app.route('/tutorial').get(protected, (req, res) => {
+	res.sendFile('tutorial.html', { root: './public/views/' });
+});
+app.route('/createBattle').get(protected, (req, res) => {
+	res.sendFile('createBattle.html', { root: './public/views/' });
 });
 // app.route('/').get((req, res) => {
 // 	res.end('Hello World!');
