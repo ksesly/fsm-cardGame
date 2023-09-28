@@ -8,7 +8,8 @@ class Model {
 		const values = Object.values(args);
 		for (let i = 0; i < keys.length; i++) this[keys[i]] = `${values[i]}`;
 	}
-	async find(id) {
+	async find(id = this.id) {
+		console.log(id + ' id in find!');
 		try {
 			const rows = await pool.execute(`SELECT * FROM ${this.tableName} WHERE id=${id}`);
 			if (rows.length > 0) {

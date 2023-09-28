@@ -5,7 +5,6 @@ const cors = require('cors');
 const app = express();
 const User = require('./models/user');
 const protected = require('./protected');
-
 const userRouter = require('./routes/userRoutes');
 const lobbyRoutes = require('./routes/lobbyRoutes');
 
@@ -16,7 +15,7 @@ app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api/v1/users', userRouter);
+app.use('', userRouter);
 
 app.route('/lobby').get(protected, (req, res) => {
 	res.sendFile('lobby.html', { root: './public/views/' });
@@ -30,9 +29,11 @@ app.route('/settings').get(protected, (req, res) => {
 app.route('/tutorial').get(protected, (req, res) => {
 	res.sendFile('tutorial.html', { root: './public/views/' });
 });
+
 app.route('/createBattle').get(protected, (req, res) => {
 	res.sendFile('createBattle.html', { root: './public/views/' });
 });
+
 // app.route('/').get((req, res) => {
 // 	res.end('Hello World!');
 // });

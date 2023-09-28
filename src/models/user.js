@@ -17,6 +17,16 @@ class User extends Model {
 		super(args);
 		this.tableName = 'users';
 	}
+	async findAndReturnUser(id = this.id) {
+		try {
+			const rows = await pool.execute(`SELECT * FROM ${this.tableName} WHERE id=${id}`);
+			if (rows.length > 0) {
+				return rows[0][0];
+			}
+		} catch (e) {
+			return {};
+		}
+	}
 	async loginToSystem(res) {}
 	// async findByEmailAndSendEmail(email) {
 	// 	try {

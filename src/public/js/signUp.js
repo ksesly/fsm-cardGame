@@ -89,7 +89,7 @@ registerForm.addEventListener('submit', async (action) => {
 	try {
 		const formData = new FormData(registerForm);
 
-		const res = await fetch('/api/v1/users/register', {
+		const res = await fetch('/register', {
 			method: 'POST',
 			body: JSON.stringify({
 				login: formData.get('login'),
@@ -109,7 +109,6 @@ registerForm.addEventListener('submit', async (action) => {
 			window.location.href = '/lobby';
 		}
 	} catch (error) {
-
 		console.error('Error:', error);
 	}
 });

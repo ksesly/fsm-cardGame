@@ -78,7 +78,7 @@ loginForm.addEventListener('submit', async (action) => {
 	try {
 		const formData = new FormData(loginForm);
 
-		const res = await fetch('/api/v1/users/login', {
+		const res = await fetch('/login', {
 			method: 'POST',
 			body: JSON.stringify({
 				login: formData.get('login'),
