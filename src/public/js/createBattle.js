@@ -9,6 +9,14 @@ function createBattle() {
 	const cancelButton = myCreationBattle.appendChild(document.createElement('button'));
 	cancelButton.className = 'cancel-button';
 	cancelButton.textContent = 'nonono, cancel';
+
+	const counter = document.createElement('div');
+    counter.className = 'counter';
+    counter.id = 'counter';
+    counter.textContent = '';
+
+    // Insert the counter above the buttons
+    myCreationBattle.insertBefore(counter, div);
 }
 
 createBattle();
@@ -31,7 +39,7 @@ function getAuthorizationCookie() {
 }
 
 const switchBtn = document.getElementById('switchButton');
-
+const counterElement = document.createElement('div');
 switchBtn.addEventListener('click', () => {
 	switchBtn.disabled = true;
 	const socket = io.connect('http://localhost:3000');
@@ -53,6 +61,26 @@ switchBtn.addEventListener('click', () => {
 		);
 	});
 
+	// switchBtn.disabled = true;
+	
+	let countdown = 5;
+	const countdownInterval = setInterval(() => {
+		
+		counterElement.className = 'counter';
+		document.body.appendChild(counterElement);
+
+		if (countdown <= 0) {
+			clearInterval(countdownInterval);
+			battle();
+		} else {
+			counterElement.textContent = countdown.toString();
+			// readyButton.textContent = `I'm ready (${countdown}s)`;
+			countdown--;
+		}
+		console.log(countdown);
+		
+	}, 1000);
+
 
 	// socket.on('switchFromServer', () => {
 	// 	if (document.body.style.background === 'darkgray') {
@@ -62,3 +90,17 @@ switchBtn.addEventListener('click', () => {
 	// 	}
 	// });
 });
+
+
+function battle() {
+    const myBattle = document.querySelector('.battle');
+	counterElement.style.display = 'none'
+	const createBattleSection = document.querySelector('.create-battle');
+	const battleSection = document.querySelector('.battle');
+
+	createBattleSection.style.display = 'none';
+	battleSection.style.display = 'block';
+	
+	// const button = battleSection.appendChild(document.createElement('button'));
+}
+
