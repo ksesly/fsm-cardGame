@@ -14,8 +14,6 @@ function createBattle() {
     counter.className = 'counter';
     counter.id = 'counter';
     counter.textContent = '';
-
-    // Insert the counter above the buttons
     myCreationBattle.insertBefore(counter, div);
 }
 
@@ -54,6 +52,24 @@ switchBtn.addEventListener('click', () => {
 	});
 	
 	socket.on('roomClosed', (dataObj) => {
+		let countdown = 5;
+		const countdownInterval = setInterval(() => {
+		
+			counterElement.className = 'counter';
+			document.body.appendChild(counterElement);
+
+			if (countdown <= 0) {
+				clearInterval(countdownInterval);
+				battle();
+			} else {
+				counterElement.textContent = countdown.toString();
+				// readyButton.textContent = `I'm ready (${countdown}s)`;
+				countdown--;
+			}
+			console.log(countdown);
+			
+		}, 1000);
+		
 		console.log('hello?');
 		console.log(`I am ${connection === dataObj.first.connection ? dataObj.first.login : dataObj.second.login}`);
 		console.log(
@@ -61,34 +77,6 @@ switchBtn.addEventListener('click', () => {
 		);
 	});
 
-	// switchBtn.disabled = true;
-	
-	let countdown = 5;
-	const countdownInterval = setInterval(() => {
-		
-		counterElement.className = 'counter';
-		document.body.appendChild(counterElement);
-
-		if (countdown <= 0) {
-			clearInterval(countdownInterval);
-			battle();
-		} else {
-			counterElement.textContent = countdown.toString();
-			// readyButton.textContent = `I'm ready (${countdown}s)`;
-			countdown--;
-		}
-		console.log(countdown);
-		
-	}, 1000);
-
-
-	// socket.on('switchFromServer', () => {
-	// 	if (document.body.style.background === 'darkgray') {
-	// 		document.body.style.background = 'white';
-	// 	} else {
-	// 		document.body.style.background = 'darkgray';
-	// 	}
-	// });
 });
 
 

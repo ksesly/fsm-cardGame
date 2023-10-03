@@ -72,7 +72,7 @@ body {
     display: none;
     height: 100vh;
     width: 100%;
-    background: no-repeat url(../assets/images/m_m_f2.png);
+    background-image: url(../assets/images/m_m_f2.png);
     /* background-size: cover; */
     overflow: hidden;
 }
