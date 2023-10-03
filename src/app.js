@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const User = require('./models/user');
 const protected = require('./protected');
 const userRouter = require('./routes/userRoutes');
 const lobbyRoutes = require('./routes/lobbyRoutes');
