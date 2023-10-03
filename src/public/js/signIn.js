@@ -46,7 +46,7 @@ function createSignIn() {
 	signInDiv.appendChild(signInButton);
 
 	const signUpLink = document.createElement('a');
-	signUpLink.setAttribute('href', '/api/v1/users/register');
+	signUpLink.setAttribute('href', '/register');
 	signUpLink.textContent = 'do not have an account?';
 
 	signInDiv.appendChild(signUpLink);

@@ -20,9 +20,9 @@ createLobby();
 const buttons = [...document.getElementsByTagName('button')];
 buttons.forEach((i) => {
 	i.addEventListener('click', () => {
-		if (i.id === 'start-button') location.replace('./createBattle.html');
-		else if (i.id === 'tutorial-button') location.replace('./tutorial.html');
-		else if (i.id === 'settings-button') location.replace('./settings.html');
-		else if (i.id === 'exit-button') location.replace('./exit.html');
+		if (i.id === 'start-button') location.replace('./createBattle');
+		else if (i.id === 'tutorial-button') location.replace('./tutorial');
+		else if (i.id === 'settings-button') location.replace('./settings');
+		else if (i.id === 'exit-button') location.replace('./exit');
 	});
 });
