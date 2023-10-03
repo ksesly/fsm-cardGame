@@ -23,3 +23,32 @@ CREATE TABLE IF NOT EXISTS `card` (
 	PRIMARY KEY (`id`)
 );
 
+
+CREATE TABLE IF NOT EXISTS `table` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`player_1` INT NOT NULL,
+	`player_2` INT NOT NULL,
+	`health_p1` INT NOT NULL DEFAULT 20,
+	`health_p2` INT NOT NULL DEFAULT 20,
+	`move` INT NOT NULL,
+	PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `card_on_table` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`player_id` INT NOT NULL,
+	`health` INT NOT NULL,
+	PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `table_card` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`table_id` INT NOT NULL,
+	`card_id` INT NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`id`) REFERENCES `card`(`id`),
+	FOREIGN KEY (`table_id`) REFERENCES `table`(`id`),
+	FOREIGN KEY (`card_id`) REFERENCES `card_on_table`(`id`)
+);
+
+INSERT INTO `ucode_web`.`card` (`image`, `title`, `description`, `cost`, `damage`, `defence`) VALUES ('321', 'Anakin', 'anakin desc', '3', '2', '1'), ("img1", 'Captain Rex', 'rex desc', '2', '10', '5');

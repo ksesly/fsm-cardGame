@@ -2,7 +2,7 @@
 const dotenv = require('dotenv');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-
+const db = require('./db');
 const app = require('./app');
 const User = require('./models/user');
 dotenv.config({ path: './config.env' });
@@ -20,15 +20,9 @@ const io = require('socket.io')(server, {
 		origin: '*',
 	},
 });
-// class Room {
-// 	constructor(clientNo, clientId) {
-// 		clientNo % 2 === 0 ? (this.firstClient = clientId) : (this.secondClient = clientId);
-// 		this.roomId = Math.round(clientNo / 2);
-// 	}
-// }
+
 io.on('connection', (socket) => {
 	socket.on('findingRoom', async (token) => {
-		// console.log(token + '!!!TOKEN GOT!!!!!!!');
 		const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 		let roomNo = Math.round(clientAmount / 2);
 		let newUser = new User(decoded.id);
@@ -48,7 +42,10 @@ io.on('connection', (socket) => {
 		}
 		socket.emit('roomNumber', { roomNo, connection: clientAmount });
 		// console.log(rooms[roomNo]);
-		if (even(clientAmount) && clientAmount !== 0) io.to(roomNo).emit('roomClosed', rooms[roomNo]);
+		if (even(clientAmount) && clientAmount !== 0) {
+			// db.execute(`INSERT INTO  ucode_web.table (player_1, player_2, move) value (${rooms[roomNo]})`);
+			io.to(roomNo).emit('roomClosed', rooms[roomNo]);
+		}
 		clientAmount++;
 	});
 
