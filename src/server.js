@@ -4,7 +4,7 @@ dotenv.config({ path: './config.env' });
 const jwt = require('jsonwebtoken');
 const app = require('./app');
 
-const { User } = require('./db');
+const { User, Table } = require('./db');
 const server = app.listen(process.env.PORT, () => {
 	console.log(`App running on port 127.0.0.1:${process.env.PORT}`);
 });
@@ -46,8 +46,18 @@ io.on('connection', (socket) => {
 			socket.emit('roomNumber', { roomNo, connection: clientAmount });
 
 			if (even(clientAmount) && clientAmount !== 0) {
-				//create table obj
-				io.to(roomNo).emit('roomClosed', rooms[roomNo]);
+				// Create a new Table record in your database using Sequelize
+				const newTable = await Table.create({
+					player_1: rooms[roomNo].first.id,
+					player_2: rooms[roomNo].second.id,
+					move: Math.random() < 0.5 ? rooms[roomNo].first.id : rooms[roomNo].second.id,
+				});
+
+				// Now, you can emit the 'roomClosed' event with the newTable's id
+				io.to(roomNo).emit('roomClosed', { newTable });
+
+				// Delete the room from the local memory
+				delete rooms[roomNo];
 			}
 
 			clientAmount++;

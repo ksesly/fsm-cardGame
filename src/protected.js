@@ -21,7 +21,6 @@ const protected = catchAsync(async (req, res, next) => {
 	const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
 	const freshUser = await User.findByPk(decoded.id);
-	// console.log('fresh USER  ', freshUser);
 	if (!freshUser || !freshUser.login) {
 		return next(new AppError('This user was deleted', 401));
 	}
