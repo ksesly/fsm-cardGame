@@ -2,7 +2,7 @@ const express = require('express');
 const authController = require('../controllers/authController');
 const catchAsync = require('../utils/catchAsync');
 const router = express.Router();
-
+const { User } = require('../db');
 router
 	.route('/register')
 	.post(authController.register)
