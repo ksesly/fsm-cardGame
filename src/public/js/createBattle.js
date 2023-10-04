@@ -58,14 +58,13 @@ const counterElement = document.createElement('div');
 switchBtn.addEventListener('click', () => {
 	switchBtn.disabled = true;
 	const socket = io.connect('http://localhost:3000');
-	let roomNo, connection, id;
-	let user;
+	let roomNo, connection;
+
 	socket.emit('findingRoom', getAuthorizationCookie());
 
 	socket.on('roomNumber', (data) => {
 		roomNo = data.roomNo;
 		connection = data.connection;
-		console.log(1);
 		fetch(`http://127.0.0.1:3000/getUser/${data.id}`) 
 			.then((response) => {
 				if (!response.ok) {
@@ -132,7 +131,10 @@ function battle() {
 
 	createBattleSection.style.display = 'none';
 	battleSection.style.display = 'flex';
-	
+
+	// opponent
+
+
 	const opponent = battleSection.appendChild(document.createElement('div'));
 	opponent.className = 'opponent';
 
@@ -140,14 +142,47 @@ function battle() {
 	myOpponentLogin.className = 'my-opponent-login-p';
 	myOpponentLogin.textContent = roomData.users.secondPlayer.login;
 
+	const opponentCards = opponent.appendChild(document.createElement('div'));
+	opponentCards.className = 'opponent-cards-div';
+
+
+	//playing board
+
+
 	const playingBoard = battleSection.appendChild(document.createElement('div'));
 	playingBoard.className = 'playing-board';
+
+	const finishButton = playingBoard.appendChild(document.createElement('button'));
+	finishButton.classList = 'finish-button';
+	finishButton.textContent = 'finish';
+
+	const opponentField = playingBoard.appendChild(document.createElement('div'));
+	opponentField.className = 'opponent-field';
+	const myField = playingBoard.appendChild(document.createElement('div'));
+	myField.className = 'my-field';
+
+	
+	
+
+
+	// me
+
+
 	const me = battleSection.appendChild(document.createElement('div'));
 	me.className = 'me';
 
 	const myLogin = me.appendChild(document.createElement('p'));
 	myLogin.className = 'my-login-p';
 	myLogin.textContent = roomData.users.firstPlayer.login;
+
+	const myCards = me.appendChild(document.createElement('div'));
+	myCards.className = 'my-cards-div';
+
+	const myEnergy = me.appendChild(document.createElement('div'));
+	myEnergy.className = "my-energy-div"
+	myEnergy.textContent = '';
+
+
 
 
 }
