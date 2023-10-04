@@ -173,7 +173,7 @@ async function addStarWarsCards() {
 }
 
 sequelize
-	.sync({ alter: true })
+	.sync({ alter: false })
 	.then(() => {
 		console.log('Database and tables synced.');
 		addStarWarsCards();

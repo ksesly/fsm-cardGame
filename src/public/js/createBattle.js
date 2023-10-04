@@ -33,25 +33,115 @@ function getAuthorizationCookie() {
 			return decodeURIComponent(value).replace('Bearer ', '');
 		}
 	}
-	return null; // Cookie not found
+	return null;
 }
+
+let roomData = {
+	roomNo: null,
+	connection: null,
+	users: {
+		firstPlayer: {
+			id: null,
+			login: null,
+			health: null
+		},
+		secondPlayer: {
+			id: null,
+			login: null,
+			health: null
+		}
+	}
+};
 
 const switchBtn = document.getElementById('switchButton');
 const counterElement = document.createElement('div');
 switchBtn.addEventListener('click', () => {
 	switchBtn.disabled = true;
 	const socket = io.connect('http://localhost:3000');
-	let roomNo, connection;
+	let roomNo, connection, id;
 	let user;
 	socket.emit('findingRoom', getAuthorizationCookie());
 
 	socket.on('roomNumber', (data) => {
 		roomNo = data.roomNo;
 		connection = data.connection;
+		
+		fetch(`http://127.0.0.1:3000/getUser/${data.id}`) 
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (data.connection % 2 !== 0) {
+					roomData.users.firstPlayer.id = data.id;
+					roomData.users.firstPlayer.login = data.login;
+				}
+				else {
+					roomData.users.secondPlayer.id = data.id;
+					roomData.users.secondPlayer.login = data.login;
+				}
+				
+			})
+			.catch((err) => {
+				console.error('pupupu', err);
+			});
+		console.log(data.id)
 		console.log('Room no data', roomNo, connection);
 	});
 	
-	socket.on('roomClosed', (dataObj) => {
+	socket.on('roomClosed', (table) => {
+		console.log(table);
+		// roomData.users.firstPlayer.health = table.health_p1;
+		// roomData.users.firstPlayer.health = table.health_p1; 
+		
+
+		for (const player in roomData.users) {
+			const p = roomData.users[player].id === table.player_1 ? table.player_1 : table.player_2;
+			const url = `http://127.0.0.1:3000/getUser/${p}`;
+			// p = roomData.users[player].id;
+			if (roomData.users[player].id) {
+				
+				fetch(url) 
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.json();
+					})
+					.then(data => {
+						roomData.users[player].login = data.user.login;
+						console.log(roomData.users);
+					})
+					.catch((err) => {
+						console.error('pupupu', err);
+					});
+			}
+			// else {
+				
+			// 	// const newP = p === table.player_2 ? table.player_2 : table.player_1;  
+			// 	fetch(url) 
+			// 		.then((response) => {
+			// 			if (!response.ok) {
+			// 				throw new Error('Network response was not ok');
+			// 			}
+			// 			return response.json();
+			// 		})
+			// 		.then(data => {
+			// 			roomData.users[player].id = data.user.id;
+			// 			roomData.users[player].login = data.user.login;
+
+			// 			console.log(roomData.users);
+			// 		})
+			// 		.catch((err) => {
+			// 			console.error('pupupu', err);
+			// 		});
+				
+			// }
+		}
+		
+
 		let countdown = 5;
 		const countdownInterval = setInterval(() => {
 		
@@ -63,18 +153,13 @@ switchBtn.addEventListener('click', () => {
 				battle();
 			} else {
 				counterElement.textContent = countdown.toString();
-				// readyButton.textContent = `I'm ready (${countdown}s)`;
 				countdown--;
 			}
 			console.log(countdown);
 			
 		}, 1000);
 		
-		console.log('hello?');
-		console.log(`I am ${connection === dataObj.first.connection ? dataObj.first.login : dataObj.second.login}`);
-		console.log(
-			`My opponent is ${connection === dataObj.first.connection ? dataObj.second.login : dataObj.first.login}`
-		);
+		
 	});
 
 });
@@ -87,8 +172,23 @@ function battle() {
 	const battleSection = document.querySelector('.battle');
 
 	createBattleSection.style.display = 'none';
-	battleSection.style.display = 'block';
+	battleSection.style.display = 'flex';
 	
-	// const button = battleSection.appendChild(document.createElement('button'));
-}
+	const opponent = battleSection.appendChild(document.createElement('div'));
+	opponent.className = 'opponent';
 
+	const myOpponentLogin = opponent.appendChild(document.createElement('p'));
+	myOpponentLogin.className = 'my-opponent-login-p';
+	myOpponentLogin.textContent = roomData.users.secondPlayer.login;
+
+	const playingBoard = battleSection.appendChild(document.createElement('div'));
+	playingBoard.className = 'playing-board';
+	const me = battleSection.appendChild(document.createElement('div'));
+	me.className = 'me';
+
+	const myLogin = me.appendChild(document.createElement('p'));
+	myLogin.className = 'my-login-p';
+	myLogin.textContent = roomData.users.firstPlayer.login;
+
+
+}
