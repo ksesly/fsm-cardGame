@@ -24,7 +24,7 @@ const sequelize = new Sequelize('ucode_web', 'kslipko', 'securepass', {
 	dialect: 'mysql',
 });
 
-const { User, Card, Table, CardOnTable, TableCard, TableCardDeck } = require('./models/models');
+const { User, Card, Table, CardOnTable, TableCard, TableCardDeck, PlayerHand } = require('./models/models');
 
 const starWarsCards = [
 	{
@@ -66,7 +66,7 @@ sequelize
 	.authenticate()
 	.then(() => {
 		console.log('Database connection has been established successfully.');
-		addStarWarsCards();
+		// addStarWarsCards();
 	})
 	.catch((error) => {
 		console.error('Unable to connect to the database:', error);
@@ -80,4 +80,5 @@ module.exports = {
 	CardOnTable,
 	TableCard,
 	TableCardDeck,
+	PlayerHand,
 };

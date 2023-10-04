@@ -128,7 +128,25 @@ const TableCardDeck = sequelize.define('table_card_deck', {
 		allowNull: false,
 	},
 });
-
+const PlayerHand = sequelize.define('player_hand', {
+	id: {
+		type: DataTypes.INTEGER,
+		primaryKey: true,
+		autoIncrement: true,
+	},
+	player_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+	card_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+	table_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+});
 User.hasMany(Table, { foreignKey: 'player_1', as: 'Player1' });
 User.hasMany(Table, { foreignKey: 'player_2', as: 'Player2' });
 
@@ -137,6 +155,10 @@ Table.belongsTo(User, { foreignKey: 'player_2', as: 'Player2' });
 
 TableCardDeck.belongsTo(Table, { foreignKey: 'table_id' });
 TableCardDeck.belongsTo(Card, { foreignKey: 'card_id' });
+
+PlayerHand.belongsTo(Card, { foreignKey: 'card_id' });
+PlayerHand.belongsTo(TableCardDeck, { foreignKey: 'table_id' });
+
 const starWarsCards = [
 	{
 		image: 'https://facts.net/wp-content/uploads/2023/07/darth-vader-with-red-light-saber.jpg',
@@ -172,15 +194,15 @@ async function addStarWarsCards() {
 	}
 }
 
-sequelize
-	.sync({ alter: false })
-	.then(() => {
-		console.log('Database and tables synced.');
-		addStarWarsCards();
-	})
-	.catch((error) => {
-		console.error('Error syncing database:', error);
-	});
+// sequelize
+// 	.sync({ alter: false })
+// 	.then(() => {
+// 		console.log('Database and tables synced.');
+// 		// addStarWarsCards();
+// 	})
+// 	.catch((error) => {
+// 		console.error('Error syncing database:', error);
+// 	});
 
 module.exports = {
 	User,
@@ -188,4 +210,5 @@ module.exports = {
 	Table,
 	CardOnTable,
 	TableCardDeck,
+	PlayerHand,
 };
