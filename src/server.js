@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 				console.log(rooms[roomNo]);
 			}
 
-			socket.emit('roomNumber', { roomNo, connection: clientAmount });
+			socket.emit('roomNumber', { roomNo, connection: clientAmount, id: decoded.id });
 
 			if (even(clientAmount) && clientAmount !== 0) {
 				const newTable = await Table.create({

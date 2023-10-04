@@ -203,15 +203,15 @@ async function addStarWarsCards() {
 	}
 }
 
-sequelize
-	.sync({ alter: false })
-	.then(() => {
-		console.log('Database and tables synced.');
-		// addStarWarsCards();
-	})
-	.catch((error) => {
-		console.error('Error syncing database:', error);
-	});
+// sequelize
+// 	.sync({ alter: true })
+// 	.then(() => {
+// 		console.log('Database and tables synced.');
+// 		// addStarWarsCards();
+// 	})
+// 	.catch((error) => {
+// 		console.error('Error syncing database:', error);
+// 	});
 
 module.exports = {
 	User,
