@@ -65,7 +65,7 @@ switchBtn.addEventListener('click', () => {
 	socket.on('roomNumber', (data) => {
 		roomNo = data.roomNo;
 		connection = data.connection;
-		
+		console.log(1);
 		fetch(`http://127.0.0.1:3000/getUser/${data.id}`) 
 			.then((response) => {
 				if (!response.ok) {
@@ -73,81 +73,44 @@ switchBtn.addEventListener('click', () => {
 				}
 				return response.json();
 			})
-			.then(data => {
-				if (data.connection % 2 !== 0) {
-					roomData.users.firstPlayer.id = data.id;
-					roomData.users.firstPlayer.login = data.login;
-				}
-				else {
-					roomData.users.secondPlayer.id = data.id;
-					roomData.users.secondPlayer.login = data.login;
-				}
-				
+			.then(value => {
+				roomData.users.firstPlayer.id = value.id;
+				roomData.users.firstPlayer.login = value.login;
 			})
 			.catch((err) => {
 				console.error('pupupu', err);
 			});
-		console.log(data.id)
+
 		console.log('Room no data', roomNo, connection);
 	});
 	
 	socket.on('roomClosed', (table) => {
-		console.log(table);
-		// roomData.users.firstPlayer.health = table.health_p1;
-		// roomData.users.firstPlayer.health = table.health_p1; 
-		
-
-		for (const player in roomData.users) {
-			const p = roomData.users[player].id === table.player_1 ? table.player_1 : table.player_2;
-			const url = `http://127.0.0.1:3000/getUser/${p}`;
-			// p = roomData.users[player].id;
-			if (roomData.users[player].id) {
+		let p = roomData.users.firstPlayer.id === table.player_1 ? table.player_2 : table.player_1;
+		const url = `http://127.0.0.1:3000/getUser/${p}`;
+		fetch(url) 
+			.then((response) => {
 				
-				fetch(url) 
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error('Network response was not ok');
-						}
-						return response.json();
-					})
-					.then(data => {
-						roomData.users[player].login = data.user.login;
-						console.log(roomData.users);
-					})
-					.catch((err) => {
-						console.error('pupupu', err);
-					});
-			}
-			// else {
-				
-			// 	// const newP = p === table.player_2 ? table.player_2 : table.player_1;  
-			// 	fetch(url) 
-			// 		.then((response) => {
-			// 			if (!response.ok) {
-			// 				throw new Error('Network response was not ok');
-			// 			}
-			// 			return response.json();
-			// 		})
-			// 		.then(data => {
-			// 			roomData.users[player].id = data.user.id;
-			// 			roomData.users[player].login = data.user.login;
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (roomData.users.secondPlayer.id === null && data.login !== roomData.users.firstPlayer.login 
+					&& data.id !== roomData.users.firstPlayer.id) {
+					roomData.users.secondPlayer.id = data.id;
+					roomData.users.secondPlayer.login = data.login;
+				}
+			})
+			.catch((err) => {
+				console.error('pupupu', err);
+			});
 
-			// 			console.log(roomData.users);
-			// 		})
-			// 		.catch((err) => {
-			// 			console.error('pupupu', err);
-			// 		});
-				
-			// }
-		}
-		
-
+		console.log(roomData.users);
 		let countdown = 5;
 		const countdownInterval = setInterval(() => {
-		
 			counterElement.className = 'counter';
 			document.body.appendChild(counterElement);
-
 			if (countdown <= 0) {
 				clearInterval(countdownInterval);
 				battle();
@@ -156,12 +119,8 @@ switchBtn.addEventListener('click', () => {
 				countdown--;
 			}
 			console.log(countdown);
-			
 		}, 1000);
-		
-		
 	});
-
 });
 
 
