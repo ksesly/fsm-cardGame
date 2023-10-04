@@ -1,11 +1,12 @@
 const express = require('express');
 
-const { TableCardDeck, Card, PlayerHand } = require('../db');
+const { TableCardDeck, Card, PlayerHand, CardOnTable } = require('../db');
+const protected = require('../protected');
 const router = express.Router();
 
 router
 	.route('/getHandCard/:playerId/:tableId')
-	.get(async (req, res) => {
+	.get(protected, async (req, res) => {
 		try {
 			const cards = await PlayerHand.findAll({
 				where: {
@@ -25,7 +26,7 @@ router
 			res.status(500).json({ error: error });
 		}
 	})
-	.post(async (req, res) => {
+	.post(protected, async (req, res) => {
 		try {
 			const tableId = req.params.tableId;
 			const playerId = req.params.playerId;
@@ -63,5 +64,59 @@ router
 			res.status(500).json({ error: 'Internal Server Error' });
 		}
 	});
+router
+	.route('/cardsOnTable/:tableId')
+	.get(protected, async (req, res) => {
+		try {
+			const tableId = req.params.tableId;
+			const cardsOnTable = await CardOnTable.findAll({
+				where: {
+					table_id: tableId,
+				},
+			});
 
+			res.status(200).json(cardsOnTable);
+		} catch (error) {
+			res.status(500).json({ error: error });
+		}
+	})
+	.post(protected, async (req, res) => {
+		try {
+			const tableId = req.params.tableId;
+			const { cardId } = req.body;
+			console.log(req.user.id);
+			const playerHandCard = await PlayerHand.findOne({
+				where: {
+					table_id: tableId,
+					card_id: cardId,
+					player_id: req.user.id,
+				},
+				include: {
+					model: Card,
+					attributes: ['id', 'image', 'title', 'description', 'cost', 'damage', 'defence'],
+				},
+			});
+
+			if (!playerHandCard) {
+				return res.status(400).json({ error: 'Card not found in PlayerHand' });
+			}
+			console.log(playerHandCard.Card);
+			const newCard = await CardOnTable.create({
+				player_id: playerHandCard.player_id,
+				health: playerHandCard.Card.defence,
+				table_id: tableId,
+				card_id: playerHandCard.card_id,
+			});
+
+			await PlayerHand.destroy({
+				where: {
+					id: playerHandCard.id,
+				},
+			});
+
+			res.status(200).json({ message: 'Card placed on the table successfully', newCard });
+		} catch (error) {
+			res.status(500).json({ error: error });
+		}
+	});
 module.exports = router;

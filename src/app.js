@@ -7,6 +7,7 @@ const protected = require('./protected');
 const userRouter = require('./routes/userRoutes');
 const lobbyRoutes = require('./routes/lobbyRoutes');
 const tableRouter = require('./routes/tableRoutes');
+const atackRoutes = require('./routes/atackRoutes');
 app.use(express.static(__dirname + '/public/'));
 app.use(cors());
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('', userRouter);
 app.use('', tableRouter);
+app.use('', atackRoutes);
 
 app.route('/lobby').get(protected, (req, res) => {
 	res.sendFile('lobby.html', { root: './public/views/' });

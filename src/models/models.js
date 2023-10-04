@@ -99,11 +99,19 @@ const CardOnTable = sequelize.define('card_on_table', {
 		primaryKey: true,
 		autoIncrement: true,
 	},
+	table_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
 	player_id: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
 	health: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+	card_id: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
@@ -158,6 +166,7 @@ TableCardDeck.belongsTo(Card, { foreignKey: 'card_id' });
 
 PlayerHand.belongsTo(Card, { foreignKey: 'card_id' });
 PlayerHand.belongsTo(TableCardDeck, { foreignKey: 'table_id' });
+CardOnTable.belongsTo(Card, { foreignKey: 'card_id', as: 'Card' });
 
 const starWarsCards = [
 	{
@@ -194,15 +203,15 @@ async function addStarWarsCards() {
 	}
 }
 
-// sequelize
-// 	.sync({ alter: false })
-// 	.then(() => {
-// 		console.log('Database and tables synced.');
-// 		// addStarWarsCards();
-// 	})
-// 	.catch((error) => {
-// 		console.error('Error syncing database:', error);
-// 	});
+sequelize
+	.sync({ alter: false })
+	.then(() => {
+		console.log('Database and tables synced.');
+		// addStarWarsCards();
+	})
+	.catch((error) => {
+		console.error('Error syncing database:', error);
+	});
 
 module.exports = {
 	User,

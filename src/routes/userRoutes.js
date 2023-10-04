@@ -15,6 +15,7 @@ router
 	.get((req, res) => {
 		res.sendFile('signIn.html', { root: './public/views/' });
 	});
+
 router.route('/getUser/:id').get(
 	catchAsync(async (req, res) => {
 		const userId = req.params.id;
