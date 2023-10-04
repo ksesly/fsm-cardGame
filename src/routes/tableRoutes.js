@@ -5,13 +5,13 @@ const protected = require('../protected');
 const router = express.Router();
 
 router
-	.route('/getHandCard/:playerId/:tableId')
+	.route('/getHandCard/:tableId')
 	.get(protected, async (req, res) => {
 		try {
 			const cards = await PlayerHand.findAll({
 				where: {
 					table_id: req.params.tableId,
-					player_id: req.params.playerId,
+					player_id: req.user.id,
 				},
 				include: {
 					model: Card,
@@ -19,6 +19,7 @@ router
 				},
 				attributes: [],
 			});
+
 			const extractedCards = cards.map((item) => item.Card);
 
 			res.status(200).json(extractedCards);
@@ -29,7 +30,7 @@ router
 	.post(protected, async (req, res) => {
 		try {
 			const tableId = req.params.tableId;
-			const playerId = req.params.playerId;
+			const playerId = req.user.id;
 			const { numberOfCardsToAdd } = req.body;
 
 			const cardsToAdd = await TableCardDeck.findAll({
@@ -61,7 +62,7 @@ router
 			res.status(200).json({ message: `Added ${numberOfCardsToAdd} cards to the player's hand.` });
 		} catch (error) {
 			console.error('Error adding cards to player hand:', error);
-			res.status(500).json({ error: 'Internal Server Error' });
+			res.status(500).json({ error: error });
 		}
 	});
 router
