@@ -109,11 +109,23 @@ const CardOnTable = sequelize.define('card_on_table', {
 	},
 });
 
-const TableCard = sequelize.define('table_card', {
+const TableCardDeck = sequelize.define('table_card_deck', {
 	id: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement: true,
+	},
+	player_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+	card_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+	table_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
 	},
 });
 
@@ -123,13 +135,48 @@ User.hasMany(Table, { foreignKey: 'player_2', as: 'Player2' });
 Table.belongsTo(User, { foreignKey: 'player_1', as: 'Player1' });
 Table.belongsTo(User, { foreignKey: 'player_2', as: 'Player2' });
 
-TableCard.belongsTo(Table, { foreignKey: 'table_id' });
-TableCard.belongsTo(CardOnTable, { foreignKey: 'card_id' });
+TableCardDeck.belongsTo(Table, { foreignKey: 'table_id' });
+TableCardDeck.belongsTo(Card, { foreignKey: 'card_id' });
+const starWarsCards = [
+	{
+		image: 'https://facts.net/wp-content/uploads/2023/07/darth-vader-with-red-light-saber.jpg',
+		title: 'Darth Vader',
+		description: 'Sith Lord',
+		cost: 5,
+		damage: 8,
+		defence: 6,
+	},
+	{
+		image: 'https://static.tvtropes.org/pmwiki/pub/images/luke_the_hero_small.png',
+		title: 'Luke Skywalker',
+		description: 'Jedi Knight',
+		cost: 4,
+		damage: 7,
+		defence: 5,
+	},
+	{
+		image: 'https://i0.wp.com/beverlyhillsfilmfestival.com/wp-content/uploads/gun.jpeg?fit=672%2C1000&ssl=1',
+		title: 'Princess Leia',
+		description: 'Rebel Leader',
+		cost: 3,
+		damage: 6,
+		defence: 4,
+	},
+];
+async function addStarWarsCards() {
+	try {
+		await Card.bulkCreate(starWarsCards);
+		console.log('Star Wars cards added to the database.');
+	} catch (error) {
+		console.error('Error adding Star Wars cards:', error);
+	}
+}
 
 sequelize
-	.sync({ alter: false })
+	.sync({ alter: true })
 	.then(() => {
 		console.log('Database and tables synced.');
+		addStarWarsCards();
 	})
 	.catch((error) => {
 		console.error('Error syncing database:', error);
@@ -140,5 +187,5 @@ module.exports = {
 	Card,
 	Table,
 	CardOnTable,
-	TableCard,
+	TableCardDeck,
 };

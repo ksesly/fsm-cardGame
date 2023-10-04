@@ -46,15 +46,30 @@ io.on('connection', (socket) => {
 			socket.emit('roomNumber', { roomNo, connection: clientAmount });
 
 			if (even(clientAmount) && clientAmount !== 0) {
-				// Create a new Table record in your database using Sequelize
 				const newTable = await Table.create({
 					player_1: rooms[roomNo].first.id,
 					player_2: rooms[roomNo].second.id,
 					move: Math.random() < 0.5 ? rooms[roomNo].first.id : rooms[roomNo].second.id,
 				});
+				const allCardIds = await Card.findAll({ attributes: ['id'] });
 
+				await Promise.all(
+					allCardIds.map(async (card) => {
+						await TableCardDeck.create({
+							table_id: newTable.id,
+							card_id: card.id,
+							player_id: newTable.player_1,
+						});
+
+						await TableCardDeck.create({
+							table_id: newTable.id,
+							card_id: card.id,
+							player_id: newTable.player_2,
+						});
+					})
+				);
 				// Now, you can emit the 'roomClosed' event with the newTable's id
-				io.to(roomNo).emit('roomClosed', { newTable });
+				io.to(roomNo).emit('roomClosed', newTable);
 
 				// Delete the room from the local memory
 				delete rooms[roomNo];
