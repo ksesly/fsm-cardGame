@@ -51,6 +51,8 @@ let roomData = {
 			health: null,
 		},
 	},
+	myDeck: [],
+	tableId: 0
 };
 
 const switchBtn = document.getElementById('switchButton');
@@ -65,7 +67,6 @@ switchBtn.addEventListener('click', () => {
 	socket.on('roomNumber', (data) => {
 		roomNo = data.roomNo;
 		connection = data.connection;
-		console.log(1);
 		fetch(`http://127.0.0.1:3000/getUser/${data.id}`)
 			.then((response) => {
 				if (!response.ok) {
@@ -84,7 +85,9 @@ switchBtn.addEventListener('click', () => {
 		console.log('Room no data', roomNo, connection);
 	});
 
-	socket.on('roomClosed', (table) => {
+	socket.on('roomClosed', async (table) => {
+		roomData.users.tableId = table.id;
+		roomData.users.firstPlayer.health = table.health_p1;
 		let p = roomData.users.firstPlayer.id === table.player_1 ? table.player_2 : table.player_1;
 		const url = `http://127.0.0.1:3000/getUser/${p}`;
 		fetch(url)
@@ -102,6 +105,7 @@ switchBtn.addEventListener('click', () => {
 				) {
 					roomData.users.secondPlayer.id = data.id;
 					roomData.users.secondPlayer.login = data.login;
+					roomData.users.secondPlayer.health = table.health_p2;
 				}
 			})
 			.catch((err) => {
@@ -110,16 +114,27 @@ switchBtn.addEventListener('click', () => {
 
 		console.log(roomData.users);
 		let countdown = 5;
-		fetch(`https://127.0.0.1:3000/getHandCard/${table.id}`, {
+
+
+		// may create a funct later
+
+		const res = await fetch(`http://127.0.0.1:3000/getHandCard/${table.id}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ numberOfCardsToAdd: 3 }),
 		});
-		fetch(`https://127.0.0.1:3000/getHandCard/${table.id}`, {
-			method: 'GET',
-		});
+		
+
+		
+
+		const json = await response.json();
+		console.log(json);
+		roomData.myDeck = JSON.parse(JSON.stringify(json));
+		
+
+
 		const countdownInterval = setInterval(() => {
 			counterElement.className = 'counter';
 			document.body.appendChild(counterElement);
@@ -136,7 +151,6 @@ switchBtn.addEventListener('click', () => {
 });
 
 function battle() {
-	const myBattle = document.querySelector('.battle');
 	counterElement.style.display = 'none';
 	const createBattleSection = document.querySelector('.create-battle');
 	const battleSection = document.querySelector('.battle');
@@ -173,28 +187,89 @@ function battle() {
 	const myField = playingBoard.appendChild(document.createElement('div'));
 	myField.className = 'my-field';
 
-	
-	
-
-
-	// me
 
 
 	const me = battleSection.appendChild(document.createElement('div'));
 	me.className = 'me';
 
-	const myLogin = me.appendChild(document.createElement('p'));
+	
+
+	const myNameAndHealth = me.appendChild(document.createElement('div'));
+	myNameAndHealth.className = 'name-and-health'
+	const myLogin = myNameAndHealth.appendChild(document.createElement('p'));
 	myLogin.className = 'my-login-p';
 	myLogin.textContent = roomData.users.firstPlayer.login;
+	const myHealth = myNameAndHealth.appendChild(document.createElement('p'));
+	myHealth.className = 'my-health-p';
+	myHealth.textContent = 'health: ' + roomData.users.firstPlayer.health;
+
 
 	const myCards = me.appendChild(document.createElement('div'));
 	myCards.className = 'my-cards-div';
 
+	roomData.myDeck.forEach(i => {
+		const card = createCard(i);
+		myCards.appendChild(card);
+	});
+
+
+
+
 	const myEnergy = me.appendChild(document.createElement('div'));
-	myEnergy.className = "my-energy-div"
-	myEnergy.textContent = '';
+	myEnergy.className = 'my-energy-div';
+	myEnergy.textContent = ''
+
+	const cards = [...document.querySelectorAll('.card')];
+	console.log(cards);
+	
+	let isActive = false;
+	cards.forEach(card => {
+		card.addEventListener('click', () => {
+			if (!isActive) {
+				card.style.border = '5px solid red';
+				isActive = true;
+				card.setAttribute('active', 'true');
+			}
+			else {
+				card.style.border = 'none';
+				isActive = false;
+				card.setAttribute('active', 'false');
+			}
+		});
+	});
+
+}
 
 
 
-
+function createCard(i) {
+	const card = document.createElement('div');
+	card.className = 'card';
+	const title = card.appendChild(document.createElement('p'));
+	title.className = 'card-name';
+	title.textContent = i.title.toLowerCase();
+	const photo = card.appendChild(document.createElement('div'));
+	photo.style.backgroundImage = 'url(' + i.image + ')';
+	photo.className = 'photo';
+	const description = card.appendChild(document.createElement('div'));
+	description.className = 'description';
+	description.textContent = i.description; 
+	const damage = card.appendChild(document.createElement('p'));
+	damage.className = 'damage';
+	damage.textContent = 'damage: ' + i.damage;
+	const defence = card.appendChild(document.createElement('p'));
+	defence.className = 'defence';
+	defence.textContent = 'defence: ' + i.defence;
+	const cost = card.appendChild(document.createElement('p'));
+	cost.className = 'cost';
+	cost.textContent = 'cost: ' + i.cost;
+	return card;
+}
+async function cardResponse() {
+	const response = await fetch(`http://127.0.0.1:3000/cardsOnTable/${roomData.tableId}`, {
+		method: 'GET',
+	});
+	const json = await response.json();
+		console.log(json);
+		roomData.myDeck = JSON.parse(JSON.stringify(json));
 }
