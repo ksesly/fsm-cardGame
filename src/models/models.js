@@ -99,11 +99,19 @@ const CardOnTable = sequelize.define('card_on_table', {
 		primaryKey: true,
 		autoIncrement: true,
 	},
+	table_id: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
 	player_id: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
 	health: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+	card_id: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
@@ -157,7 +165,8 @@ TableCardDeck.belongsTo(Table, { foreignKey: 'table_id' });
 TableCardDeck.belongsTo(Card, { foreignKey: 'card_id' });
 
 PlayerHand.belongsTo(Card, { foreignKey: 'card_id' });
-PlayerHand.belongsTo(TableCardDeck, { foreignKey: 'table_id' });
+// PlayerHand.belongsTo(TableCardDeck, { foreignKey: 'table_id' });
+CardOnTable.belongsTo(Card, { foreignKey: 'card_id', as: 'Card' });
 
 const starWarsCards = [
 	{

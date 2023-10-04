@@ -5,24 +5,24 @@ function createBattle() {
 	const readyButton = div.appendChild(document.createElement('button'));
 	readyButton.className = 'ready-button';
 	readyButton.textContent = 'im ready';
-	readyButton.id = "switchButton";
+	readyButton.id = 'switchButton';
 	const cancelButton = myCreationBattle.appendChild(document.createElement('button'));
 	cancelButton.className = 'cancel-button';
 	cancelButton.textContent = 'nonono, cancel';
 
 	const counter = document.createElement('div');
-    counter.className = 'counter';
-    counter.id = 'counter';
-    counter.textContent = '';
-    myCreationBattle.insertBefore(counter, div);
+	counter.className = 'counter';
+	counter.id = 'counter';
+	counter.textContent = '';
+	myCreationBattle.insertBefore(counter, div);
 }
 
 createBattle();
 
 const cancelButton = document.querySelector('.cancel-button');
 
-cancelButton.addEventListener("click", () => {
-	location.replace("./lobby");
+cancelButton.addEventListener('click', () => {
+	location.replace('./lobby');
 });
 
 function getAuthorizationCookie() {
@@ -43,14 +43,14 @@ let roomData = {
 		firstPlayer: {
 			id: null,
 			login: null,
-			health: null
+			health: null,
 		},
 		secondPlayer: {
 			id: null,
 			login: null,
-			health: null
-		}
-	}
+			health: null,
+		},
+	},
 };
 
 const switchBtn = document.getElementById('switchButton');
@@ -65,14 +65,15 @@ switchBtn.addEventListener('click', () => {
 	socket.on('roomNumber', (data) => {
 		roomNo = data.roomNo;
 		connection = data.connection;
-		fetch(`http://127.0.0.1:3000/getUser/${data.id}`) 
+		console.log(1);
+		fetch(`http://127.0.0.1:3000/getUser/${data.id}`)
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error('Network response was not ok');
 				}
 				return response.json();
 			})
-			.then(value => {
+			.then((value) => {
 				roomData.users.firstPlayer.id = value.id;
 				roomData.users.firstPlayer.login = value.login;
 			})
@@ -82,21 +83,23 @@ switchBtn.addEventListener('click', () => {
 
 		console.log('Room no data', roomNo, connection);
 	});
-	
+
 	socket.on('roomClosed', (table) => {
 		let p = roomData.users.firstPlayer.id === table.player_1 ? table.player_2 : table.player_1;
 		const url = `http://127.0.0.1:3000/getUser/${p}`;
-		fetch(url) 
+		fetch(url)
 			.then((response) => {
-				
 				if (!response.ok) {
 					throw new Error('Network response was not ok');
 				}
 				return response.json();
 			})
-			.then(data => {
-				if (roomData.users.secondPlayer.id === null && data.login !== roomData.users.firstPlayer.login 
-					&& data.id !== roomData.users.firstPlayer.id) {
+			.then((data) => {
+				if (
+					roomData.users.secondPlayer.id === null &&
+					data.login !== roomData.users.firstPlayer.login &&
+					data.id !== roomData.users.firstPlayer.id
+				) {
 					roomData.users.secondPlayer.id = data.id;
 					roomData.users.secondPlayer.login = data.login;
 				}
@@ -107,6 +110,16 @@ switchBtn.addEventListener('click', () => {
 
 		console.log(roomData.users);
 		let countdown = 5;
+		fetch(`https://127.0.0.1:3000/getHandCard/${table.id}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ numberOfCardsToAdd: 3 }),
+		});
+		fetch(`https://127.0.0.1:3000/getHandCard/${table.id}`, {
+			method: 'GET',
+		});
 		const countdownInterval = setInterval(() => {
 			counterElement.className = 'counter';
 			document.body.appendChild(counterElement);
@@ -122,10 +135,9 @@ switchBtn.addEventListener('click', () => {
 	});
 });
 
-
 function battle() {
-    const myBattle = document.querySelector('.battle');
-	counterElement.style.display = 'none'
+	const myBattle = document.querySelector('.battle');
+	counterElement.style.display = 'none';
 	const createBattleSection = document.querySelector('.create-battle');
 	const battleSection = document.querySelector('.battle');
 

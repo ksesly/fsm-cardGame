@@ -5,7 +5,7 @@ const AppError = require('./utils/appError');
 const catchAsync = require('./utils/catchAsync');
 
 const protected = catchAsync(async (req, res, next) => {
-	if (req.headers.cookie.search(/authorization/) >= 0) {
+	if (req.headers.cookie && req.headers.cookie.search(/authorization/) >= 0) {
 		req.headers['authorization'] = req.headers.cookie
 			.slice(req.headers.cookie.search('authorization'))
 			.replace('authorization=', '');

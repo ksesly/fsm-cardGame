@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 						});
 					})
 				);
-				// Now, you can emit the 'roomClosed' event with the newTable's id
+
 				io.to(roomNo).emit('roomClosed', newTable);
 
 				// Delete the room from the local memory
