@@ -92,15 +92,75 @@ body {
 }
 
 .opponent, .me {
-height:200px;
+    height:200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .playing-board {
-height: 531px;
+    height: 531px;
+    display: flex;
+    justify-content: center;
 }
+.playing-board:not(.finish-button, .my-energy-div) {
+    align-items: center;
+}
+
+.opponent-field, .my-field {
+    width: 120px;
+    height: 200px;
+}
+
+.my-energy-div {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 10px solid black;
+    position: absolute;
+    left: 20px; 
+    background-color: white;
+}
+.finish-button {
+    width: 200px;
+    height: 40px;
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    font-family: 'Star Jedi'; 
+    opacity: 1;   
+    font-size: 16px;
+    transition: 0.3s;
+    position: absolute;
+    right: 10px;
+}
+
+.finish-button:hover {
+    width: 230px;
+    color: black;
+    background-color: white;
+    font-size: 19px;
+}
+
 
 .my-login-p, .my-opponent-login-p {
     font-size: 40px;
-    color: rgb(255, 49, 163)
+    color: rgb(255, 49, 163);
+    position: absolute;
+    right: 10px;
+    margin: 0;
 }
 
+.my-login-p {
+    bottom: 10px;
+}
+
+.my-opponent-login-p {
+    top: 10px;
+}
+
+.my-cards-div, .opponent-cards-div {
+    width: 150px;
+} 
