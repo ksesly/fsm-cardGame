@@ -4,7 +4,7 @@ dotenv.config({ path: './config.env' });
 const jwt = require('jsonwebtoken');
 const app = require('./app');
 
-const { User, Table } = require('./db');
+const { User, Table, Card } = require('./db');
 const server = app.listen(process.env.PORT, () => {
 	console.log(`App running on port 127.0.0.1:${process.env.PORT}`);
 });
