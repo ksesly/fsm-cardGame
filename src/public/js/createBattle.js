@@ -1,3 +1,5 @@
+var socket;
+
 function createBattle() {
 	const myCreationBattle = document.querySelector('.create-battle');
 	const div = myCreationBattle.appendChild(document.createElement('div'));
@@ -60,13 +62,13 @@ const switchBtn = document.getElementById('switchButton');
 const counterElement = document.createElement('div');
 switchBtn.addEventListener('click', () => {
 	switchBtn.disabled = true;
-	const socket = io.connect('http://localhost:3000');
+	socket = io.connect('http://localhost:3000');
 	let roomNo, connection;
 
 	socket.emit('findingRoom', getAuthorizationCookie());
 
 	socket.on('roomNumber', (data) => {
-		roomNo = data.roomNo;
+		roomData.roomNo = data.roomNo;
 		connection = data.connection;
 		fetch(`http://127.0.0.1:3000/getUser/${data.id}`)
 			.then((response) => {
@@ -119,25 +121,9 @@ switchBtn.addEventListener('click', () => {
 
 		// may create a funct later
 
-		const res = await fetch(`http://127.0.0.1:3000/getHandCard/${table.id}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ numberOfCardsToAdd: 3 }),
-		});
-		const response = await fetch(`http://127.0.0.1:3000/getHandCard/${table.id}`, {
-			method: 'GET',
-		});
-		
-		
+		await cardInHandPost();
+		await cardInHandGet();
 
-		
-
-		const json = await response.json();
-		console.log(json);
-		roomData.myDeck = JSON.parse(JSON.stringify(json));
-		
 
 
 		const countdownInterval = setInterval(() => {
@@ -212,6 +198,7 @@ function battle() {
 	const myCards = me.appendChild(document.createElement('div'));
 	myCards.className = 'my-cards-div';
 
+	console.log('render card in hadn the first time', roomData.myDeck);
 	console.log(roomData.myDeck);
 	roomData.myDeck.forEach(i => {
 		const card = createCard(i);
@@ -226,7 +213,7 @@ function battle() {
 	myEnergy.textContent = ''
 
 
-	const myCardsOnTableDiv = document.querySelector('.my-field');
+	
 	const cards = [...document.querySelectorAll('.card')];
 	
 	let isActive = false;
@@ -236,58 +223,105 @@ function battle() {
 		  	if (!isActive) {
 				card.style.border = '5px solid red';
 				isActive = true;
-				myCardsOnTableDiv.style.border = '5px solid red';
+				myField.style.border = '5px solid red';
 				// card.setAttribute('active', 'true');
-				myCardsOnTableDiv.addEventListener('click', async () => {
-					if (isActive) { // Проверяем, активна ли какая-либо карта
+				myField.addEventListener('click', async () => {
+					if (isActive) { 
 						cardId = card.id * 1;
+						
 						await cardOnTablePost(cardId);
-						roomData.cardsOnTable = await cardOnTableGet();
-						console.log(roomData.cardsOnTable);
-						roomData.cardsOnTable.forEach(i => {
-							// console.log(i);
-							// const card = createCard(i);
+						socket.emit('render_table', roomData.roomNo);
+						myField.innerHTML = '';
+						card.remove();
+						roomData.myDeck = await cardInHandGet();
+						// roomData.myDeck.forEach(i => {
+						// 	const card = createCard(i);
+						// 	myCards.appendChild(card);
+						// });
+					
+
+						
+						// console.log(roomData.cardsOnTable);
+						// roomData.cardsOnTable.forEach(i => {
+							
+						// 	console.log('render card on the table time', i);
+						// 	// console.log(i);
+						// 	// const card = createCard(i);
 							
 
-							const card = document.createElement('div');
-							// card.id = i.Card.id;
-							card.className = 'card';
-							const title = card.appendChild(document.createElement('p'));
-							title.className = 'card-name';
-							title.textContent = i.Card.title;
-							const photo = card.appendChild(document.createElement('div'));
-							photo.style.backgroundImage = 'url(' + i.Card.image + ')';
-							photo.className = 'photo';
-							const description = card.appendChild(document.createElement('div'));
-							description.className = 'description';
-							description.textContent = i.Card.description; 
-							const damage = card.appendChild(document.createElement('p'));
-							damage.className = 'damage';
-							damage.textContent = 'damage: ' + i.Card.damage;
-							const defence = card.appendChild(document.createElement('p'));
-							defence.className = 'defence';
-							defence.textContent = 'defence: ' + i.Card.defence;
-							const cost = card.appendChild(document.createElement('p'));
-							cost.className = 'cost';
-							cost.textContent = 'cost: ' + i.Card.cost;
-							// return card;
+						// 	const card = document.createElement('div');
+						// 	// card.id = i.Card.id;
+						// 	card.className = 'card';
+						// 	const title = card.appendChild(document.createElement('p'));
+						// 	title.className = 'card-name';
+						// 	title.textContent = i.Card.title;
+						// 	const photo = card.appendChild(document.createElement('div'));
+						// 	photo.style.backgroundImage = 'url(' + i.Card.image + ')';
+						// 	photo.className = 'photo';
+						// 	const description = card.appendChild(document.createElement('div'));
+						// 	description.className = 'description';
+						// 	description.textContent = i.Card.description; 
+						// 	const damage = card.appendChild(document.createElement('p'));
+						// 	damage.className = 'damage';
+						// 	damage.textContent = 'damage: ' + i.Card.damage;
+						// 	const defence = card.appendChild(document.createElement('p'));
+						// 	defence.className = 'defence';
+						// 	defence.textContent = 'defence: ' + i.Card.defence;
+						// 	const cost = card.appendChild(document.createElement('p'));
+						// 	cost.className = 'cost';
+						// 	cost.textContent = 'cost: ' + i.Card.cost;
+						// 	// return card;
 
-							myCardsOnTableDiv.appendChild(card);
-						});
+						// 	myField.appendChild(card);
+						// });
 					}
 				});
 		  	} else {
 				card.style.border = 'none';
 				isActive = false;
-				myCardsOnTableDiv.style.border = 'none';
+				myField.style.border = 'none';
 				// card.setAttribute('active', 'false');
 		  	}
 		});
 	
 		
-	  });
+	});
 
-	
+	socket.on('render_table_from_server', async () => {
+		roomData.cardsOnTable = await cardOnTableGet();
+		myField.innerHTML = '';
+		roomData.cardsOnTable.forEach(i => { 
+			console.log('render card on the table time', i);
+			// console.log(i);
+			// const card = createCard(i);
+			
+
+			const card = document.createElement('div');
+			// card.id = i.Card.id;
+			card.className = 'card';
+			const title = card.appendChild(document.createElement('p'));
+			title.className = 'card-name';
+			title.textContent = i.Card.title;
+			const photo = card.appendChild(document.createElement('div'));
+			photo.style.backgroundImage = 'url(' + i.Card.image + ')';
+			photo.className = 'photo';
+			const description = card.appendChild(document.createElement('div'));
+			description.className = 'description';
+			description.textContent = i.Card.description; 
+			const damage = card.appendChild(document.createElement('p'));
+			damage.className = 'damage';
+			damage.textContent = 'damage: ' + i.Card.damage;
+			const defence = card.appendChild(document.createElement('p'));
+			defence.className = 'defence';
+			defence.textContent = 'defence: ' + i.Card.defence;
+			const cost = card.appendChild(document.createElement('p'));
+			cost.className = 'cost';
+			cost.textContent = 'cost: ' + i.Card.cost;
+			// return card;
+
+			myField.appendChild(card);
+		})
+	});
 
 }
 
@@ -336,6 +370,25 @@ async function cardOnTablePost(id) {
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({ cardId: id }),
+	});
+}
+
+
+async function cardInHandGet() {
+	const response = await fetch(`http://127.0.0.1:3000/getHandCard/${roomData.tableId}`, {
+		method: 'GET',
+	});
+
+	const json = await response.json();
+	return roomData.myDeck = JSON.parse(JSON.stringify(json));
+}
+async function cardInHandPost() {
+	const res = await fetch(`http://127.0.0.1:3000/getHandCard/${roomData.tableId}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ numberOfCardsToAdd: 3 }),
 	});
 }
 
