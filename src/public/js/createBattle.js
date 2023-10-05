@@ -325,11 +325,11 @@ async function battle() {
 		});
 		socket.on('render_hp_from_server', async () => {
 			const chatacterHealth = await healthGet();
-			myHealth.textContent = chatacterHealth.yourHp;
+			myHealth.textContent = 'health: ' + chatacterHealth.yourHp;
 			myOpponentHealth.textContent = chatacterHealth.enemyHp;
 
 			roomData.users.firstPlayer.health = chatacterHealth.yourHp;
-			roomData.users.secondPlayer.health = chatacterHealth.enemyHp;
+			roomData.users.secondPlayer.health = 'health: ' + chatacterHealth.enemyHp;
 		});
 	});
 
