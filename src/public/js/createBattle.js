@@ -310,22 +310,21 @@ async function battle() {
 		const mainOpponentAttack = document.querySelector('.opponent-attack-button');
 		mainOpponentAttack.addEventListener('click', async () => {
 			const temp = await cardAttackMainPost();
-			
+
 			// roomData.users.secondPlayer.health = temp.enemyHP;
 			// myOpponentHealth.textContent = roomData.users.secondPlayer.health;
 			socket.emit('render_hp', roomData.roomNo);
-			// const t = 
+			// const t =
 			// console.log(t);
-
 		});
 		socket.on('render_hp_from_server', async () => {
 			const chatacterHealth = await healthGet();
 			myHealth.textContent = chatacterHealth.yourHp;
 			myOpponentHealth.textContent = chatacterHealth.enemyHp;
-			
+
 			roomData.users.firstPlayer.health = chatacterHealth.yourHp;
 			roomData.users.secondPlayer.health = chatacterHealth.enemyHp;
-		})
+		});
 	});
 
 	finishButton.addEventListener('click', async (btn) => {
@@ -474,7 +473,7 @@ async function cardAttackPost() {
 	});
 }
 async function cardAttackMainPost() {
-	// console.log(myCardAttack, 'IDID');
+	console.log(myCardAttack, 'IDID');
 	const res = await fetch(`http://127.0.0.1:3000/attack-player`, {
 		method: 'POST',
 		headers: {
@@ -498,7 +497,7 @@ async function MovesLeft() {
 	return JSON.parse(JSON.stringify(json)).movesLeft;
 }
 async function healthGet() {
-	const res = await fetch(`http://127.0.0.1:3000/etMyHp${roomData.tableId}`, {
+	const res = await fetch(`http://127.0.0.1:3000/getMyHp/${roomData.tableId}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
