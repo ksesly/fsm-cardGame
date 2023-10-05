@@ -74,6 +74,12 @@ router
 				where: {
 					table_id: tableId,
 				},
+				include: {
+					model: Card,
+					as: 'Card',
+					attributes: ['id', 'image', 'title', 'description', 'cost', 'damage', 'defence'],
+				},
+				attributes: [],
 			});
 
 			res.status(200).json(cardsOnTable);
@@ -85,7 +91,6 @@ router
 		try {
 			const tableId = req.params.tableId;
 			const { cardId } = req.body;
-			console.log(req.user.id);
 			const playerHandCard = await PlayerHand.findOne({
 				where: {
 					table_id: tableId,
