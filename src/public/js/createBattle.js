@@ -142,8 +142,6 @@ switchBtn.addEventListener('click', () => {
 	});
 });
 
-
-
 async function battle() {
 	counterElement.style.display = 'none';
 	createBattleSection = document.querySelector('.create-battle');
@@ -168,7 +166,6 @@ async function battle() {
 	myOpponentHealth = opponentNameAndHealth.appendChild(document.createElement('p'));
 	myOpponentHealth.className = 'my-opponent-health-p';
 
-	
 	playingBoard = battleSection.appendChild(document.createElement('div'));
 	playingBoard.className = 'playing-board';
 
@@ -176,7 +173,7 @@ async function battle() {
 	finishButton.classList = 'finish-button';
 	// finishButton.disabled = 'false';
 	finishButton.textContent = 'finish';
-	
+
 	opponentField = playingBoard.appendChild(document.createElement('div'));
 	opponentField.className = 'opponent-field';
 	myField = playingBoard.appendChild(document.createElement('div'));
@@ -198,7 +195,7 @@ async function battle() {
 		myOpponentHealth.textContent = 'health: ' + roomData.users.secondPlayer.health;
 
 		// myTurn = me.appendChild(document.createElement('div'));
-		// myTurn.className = 'my-turn-div'; 
+		// myTurn.className = 'my-turn-div';
 
 		myHealth.textContent = 'health: ' + roomData.users.firstPlayer.health;
 
@@ -206,7 +203,7 @@ async function battle() {
 		// myCards.className = 'my-cards-div';
 
 		// myCards.innerHTML = '';
-		
+
 		// roomData.myDeck.forEach((i) => {
 		// 	const card = createCard(i);
 		// 	myCards.appendChild(card);
@@ -217,13 +214,14 @@ async function battle() {
 		myEnergy.textContent = '';
 
 		const cards = [...document.querySelectorAll('.card')];
-		
+
 		let isActive = false;
 		let cardId = null;
 		let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
 			method: 'GET',
 		});
 		const json = await response_turn.json();
+		console.log(json, json.yourMove, '!!!!!!!!!!!!!');
 		if (json.yourMove) {
 			myTurn.textContent = 'it`s my turn';
 			// finishButton.disabled = 'false';
@@ -234,14 +232,14 @@ async function battle() {
 						isActive = true;
 						myField.style.border = '5px solid red';
 						myField.addEventListener('click', async () => {
-						if (isActive) {
-							cardId = card.id * 1;
-							await cardOnTablePost(cardId);
-							socket.emit('render_table', roomData.roomNo);
-							myField.innerHTML = '';
-							card.remove();
-							roomData.myDeck = await cardInHandGet();
-						}
+							if (isActive) {
+								cardId = card.id * 1;
+								await cardOnTablePost(cardId);
+								socket.emit('render_table', roomData.roomNo);
+								myField.innerHTML = '';
+								card.remove();
+								roomData.myDeck = await cardInHandGet();
+							}
 						});
 					} else {
 						card.style.border = 'none';
@@ -250,9 +248,7 @@ async function battle() {
 					}
 				});
 			});
-			
-		}
-		else {
+		} else {
 			myTurn.textContent = 'it`s not my turn';
 		}
 
@@ -275,8 +271,7 @@ async function battle() {
 			opponentField.appendChild(card);
 		});
 	});
-	
-	
+
 	finishButton.addEventListener('click', async (btn) => {
 		// let ifChange = await movePost();
 		// console.log(ifChange);
@@ -286,19 +281,15 @@ async function battle() {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-			}
-	
+			},
 		});
 		const json = await res.json();
-		let ifChange = JSON.parse(JSON.stringify(json))
+		let ifChange = JSON.parse(JSON.stringify(json));
 		console.log(ifChange);
-
-		
+		socket.emit('render_table', roomData.roomNo);
 		await cardInHandPost();
 	});
 }
-
-
 
 function createObjectsCard(i) {
 	const card = document.createElement('div');
@@ -401,13 +392,11 @@ async function cardInHandPost(numberOfCards = 3) {
 // 	return (roomData.myDeck = JSON.parse(JSON.stringify(json)));
 // }
 
-
-
 async function renderAll() {
 	myOpponentHealth.textContent = 'health: ' + roomData.users.secondPlayer.health;
 
 	myTurn = me.appendChild(document.createElement('div'));
-	myTurn.className = 'my-turn-div'; 
+	myTurn.className = 'my-turn-div';
 
 	myHealth.textContent = 'health: ' + roomData.users.firstPlayer.health;
 
@@ -426,7 +415,7 @@ async function renderAll() {
 	myEnergy.textContent = '';
 
 	const cards = [...document.querySelectorAll('.card')];
-	
+
 	let isActive = false;
 	let cardId = null;
 	let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
@@ -443,14 +432,14 @@ async function renderAll() {
 					isActive = true;
 					myField.style.border = '5px solid red';
 					myField.addEventListener('click', async () => {
-					if (isActive) {
-						cardId = card.id * 1;
-						await cardOnTablePost(cardId);
-						socket.emit('render_table', roomData.roomNo);
-						myField.innerHTML = '';
-						card.remove();
-						roomData.myDeck = await cardInHandGet();
-					}
+						if (isActive) {
+							cardId = card.id * 1;
+							await cardOnTablePost(cardId);
+							socket.emit('render_table', roomData.roomNo);
+							myField.innerHTML = '';
+							card.remove();
+							roomData.myDeck = await cardInHandGet();
+						}
 					});
 				} else {
 					card.style.border = 'none';
@@ -459,9 +448,7 @@ async function renderAll() {
 				}
 			});
 		});
-		  
-	}
-	else {
+	} else {
 		myTurn.textContent = 'it`s not my turn';
 	}
 
