@@ -228,39 +228,64 @@ function battle() {
 
 	const myCardsOnTableDiv = document.querySelector('.my-field');
 	const cards = [...document.querySelectorAll('.card')];
-	console.log(cards);
 	
 	let isActive = false;
 	let cardId = null;
 	cards.forEach(card => {
-		// console.log(card);
 		card.addEventListener('click', () => {
-			if (!isActive) {
+		  	if (!isActive) {
 				card.style.border = '5px solid red';
 				isActive = true;
-				card.setAttribute('active', 'true');
 				myCardsOnTableDiv.style.border = '5px solid red';
-				cardId = card.id * 1;
+				// card.setAttribute('active', 'true');
 				myCardsOnTableDiv.addEventListener('click', async () => {
-					console.log(cardId);
-					await cardOnTablePost(cardId);
-					roomData.cardsOnTable = await cardOnTableGet();
-					console.log(roomData.cardsOnTable);
-					roomData.cardsOnTable.forEach(i => {
-						const card = createCard(i);
-						myCardsOnTableDiv.appendChild(card);
-					});
-				})
-			}
-			else {
+					if (isActive) { // Проверяем, активна ли какая-либо карта
+						cardId = card.id * 1;
+						await cardOnTablePost(cardId);
+						roomData.cardsOnTable = await cardOnTableGet();
+						console.log(roomData.cardsOnTable);
+						roomData.cardsOnTable.forEach(i => {
+							// console.log(i);
+							// const card = createCard(i);
+							
+
+							const card = document.createElement('div');
+							// card.id = i.Card.id;
+							card.className = 'card';
+							const title = card.appendChild(document.createElement('p'));
+							title.className = 'card-name';
+							title.textContent = i.Card.title;
+							const photo = card.appendChild(document.createElement('div'));
+							photo.style.backgroundImage = 'url(' + i.Card.image + ')';
+							photo.className = 'photo';
+							const description = card.appendChild(document.createElement('div'));
+							description.className = 'description';
+							description.textContent = i.Card.description; 
+							const damage = card.appendChild(document.createElement('p'));
+							damage.className = 'damage';
+							damage.textContent = 'damage: ' + i.Card.damage;
+							const defence = card.appendChild(document.createElement('p'));
+							defence.className = 'defence';
+							defence.textContent = 'defence: ' + i.Card.defence;
+							const cost = card.appendChild(document.createElement('p'));
+							cost.className = 'cost';
+							cost.textContent = 'cost: ' + i.Card.cost;
+							// return card;
+
+							myCardsOnTableDiv.appendChild(card);
+						});
+					}
+				});
+		  	} else {
 				card.style.border = 'none';
 				isActive = false;
-				card.setAttribute('active', 'false');
 				myCardsOnTableDiv.style.border = 'none';
-			}
-			
+				// card.setAttribute('active', 'false');
+		  	}
 		});
-	});
+	
+		
+	  });
 
 	
 
