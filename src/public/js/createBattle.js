@@ -216,7 +216,7 @@ async function battle() {
 		const cards = [...document.querySelectorAll('.card')];
 
 		let isActive = false;
-		let cardId = null;
+				let cardId = null;
 		let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
 			method: 'GET',
 		});
@@ -224,7 +224,7 @@ async function battle() {
 		console.log(json, json.yourMove, '!!!!!!!!!!!!!');
 		if (json.yourMove) {
 			myTurn.textContent = 'it`s my turn';
-			// finishButton.disabled = 'false';
+// finishButton.disabled = 'false';
 			cards.forEach((card, index) => {
 				card.addEventListener('click', async () => {
 					if (!isActive) {
@@ -273,7 +273,7 @@ async function battle() {
 	});
 
 	finishButton.addEventListener('click', async (btn) => {
-		// let ifChange = await movePost();
+// let ifChange = await movePost();
 		// console.log(ifChange);
 		console.log(roomData.tableId, 'id');
 
@@ -314,7 +314,7 @@ function createObjectsCard(i) {
 	const cost = card.appendChild(document.createElement('p'));
 	cost.className = 'cost';
 	cost.textContent = 'cost: ' + i.Card.cost;
-	return card;
+		return card;
 }
 
 function createCard(i) {
@@ -418,7 +418,7 @@ async function renderAll() {
 	const cards = [...document.querySelectorAll('.card')];
 
 	let isActive = false;
-	let cardId = null;
+		let cardId = null;
 	let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
 		method: 'GET',
 	});
@@ -440,7 +440,7 @@ async function renderAll() {
 							myField.innerHTML = '';
 							card.remove();
 							roomData.myDeck = await cardInHandGet();
-						}
+													}
 					});
 				} else {
 					card.style.border = 'none';
