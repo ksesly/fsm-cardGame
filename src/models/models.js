@@ -350,7 +350,7 @@ async function addStarWarsCards() {
 }
 // MAKE TRUE!!!!!!!!!!!!
 sequelize
-	.sync({ alter: false })
+	.sync({ alter: true })
 	.then(() => {
 		console.log('Database and tables synced.');
 
