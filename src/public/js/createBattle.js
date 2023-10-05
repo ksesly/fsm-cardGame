@@ -274,7 +274,7 @@ function createCard(i) {
 	card.className = 'card';
 	const title = card.appendChild(document.createElement('p'));
 	title.className = 'card-name';
-	title.textContent = i.title.toLowerCase();
+	title.textContent = i.title;
 	const photo = card.appendChild(document.createElement('div'));
 	photo.style.backgroundImage = 'url(' + i.image + ')';
 	photo.className = 'photo';
@@ -299,7 +299,7 @@ async function cardOnTableGet() {
 		method: 'GET',
 	});
 	const json = await response.json();
-	roomData.cardsOnTable = JSON.parse(JSON.stringify(json));
+	return roomData.cardsOnTable = JSON.parse(JSON.stringify(json));
 }
 
 
