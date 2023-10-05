@@ -126,9 +126,9 @@ router
 	});
 router.route('/changeTurn/:tableId').post(protected, async (req, res) => {
 	const tableId = req.params.tableId;
-
+	console.log(tableId, 'THIS ISISISISIISSIIS');
 	try {
-		const table = await Table.findByPk(tableId);
+		const table = await Table.findByPk(tableId * 1);
 
 		if (!table) return res.status(404).json({ error: 'Table not found' });
 		if (table.mana_per_move < 10 && table.mana_p1 === table.mana_p2) table.mana_per_move += 1;
@@ -137,7 +137,7 @@ router.route('/changeTurn/:tableId').post(protected, async (req, res) => {
 		table.move = table.move === table.player_1 ? table.player_2 : table.player_1;
 
 		await table.save();
-		res.status(200).json({ message: 'Turn changed successfully', table });
+		res.status(200).json({ message: 'Turn changed successfully' });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error });

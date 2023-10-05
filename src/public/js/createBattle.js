@@ -278,8 +278,22 @@ async function battle() {
 	
 	
 	finishButton.addEventListener('click', async (btn) => {
-		let ifChange = await movePost();
+		// let ifChange = await movePost();
+		// console.log(ifChange);
+		console.log(roomData.tableId, 'id');
+
+		const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId * 1}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			}
+	
+		});
+		const json = await res.json();
+		let ifChange = JSON.parse(JSON.stringify(json))
 		console.log(ifChange);
+
+		
 		await cardInHandPost();
 	});
 }
@@ -374,18 +388,18 @@ async function cardInHandPost(numberOfCards = 3) {
 	});
 }
 
-async function movePost() {
-	const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId}`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: {},
+// async function movePost() {
+// 	const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId}`, {
+// 		method: 'POST',
+// 		headers: {
+// 			'Content-Type': 'application/json',
+// 		},
+// 		body: {},
 
-	});
-	const json = await res.json();
-	return (roomData.myDeck = JSON.parse(JSON.stringify(json)));
-}
+// 	});
+// 	const json = await res.json();
+// 	return (roomData.myDeck = JSON.parse(JSON.stringify(json)));
+// }
 
 
 
