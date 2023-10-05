@@ -80,11 +80,11 @@ router.route('/attack-player').post(protected, async (req, res) => {
 		table[health] -= attackingCard.Card.damage;
 		if (table[health] <= 0) {
 			await table.save();
-			return res.status(200).json({ message: 'Player killed', status: 0, table });
+			return res.status(200).json({ message: 'Player killed', status: 0 });
 		}
 
 		await table.save();
-		return res.status(200).json({ message: 'Player damaged', status: 1, enemyHP: table[health], table });
+		return res.status(200).json({ message: 'Player damaged', status: 1, enemyHP: table[health] });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: error.message });

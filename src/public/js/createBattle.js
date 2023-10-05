@@ -319,8 +319,13 @@ async function battle() {
 
 		});
 		socket.on('render_hp_from_server', async () => {
-			await healthGet();
-		} )
+			const chatacterHealth = await healthGet();
+			myHealth.textContent = chatacterHealth.yourHp;
+			myOpponentHealth.textContent = chatacterHealth.enemyHp;
+			
+			roomData.users.firstPlayer.health = chatacterHealth.yourHp;
+			roomData.users.secondPlayer.health = chatacterHealth.enemyHp;
+		})
 	});
 
 	finishButton.addEventListener('click', async (btn) => {
@@ -455,7 +460,7 @@ async function cardInHandPost(numberOfCards = 3) {
 	});
 }
 async function cardAttackPost() {
-	console.log(myCardAttack, opponentCardAttack, 'IDID');
+	// console.log(myCardAttack, opponentCardAttack, 'IDID');
 	const res = await fetch(`http://127.0.0.1:3000/attack`, {
 		method: 'POST',
 		headers: {
@@ -469,7 +474,7 @@ async function cardAttackPost() {
 	});
 }
 async function cardAttackMainPost() {
-	console.log(myCardAttack, opponentCardAttack, 'IDID');
+	// console.log(myCardAttack, 'IDID');
 	const res = await fetch(`http://127.0.0.1:3000/attack-player`, {
 		method: 'POST',
 		headers: {
