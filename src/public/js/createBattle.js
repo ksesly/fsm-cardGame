@@ -91,7 +91,7 @@ switchBtn.addEventListener('click', () => {
 				console.error('pupupu', err);
 			});
 
-		console.log('Room no data', roomNo, connection);
+		// console.log('Room no data', roomNo, connection);
 	});
 
 	socket.on('roomClosed', async (table) => {
@@ -231,7 +231,7 @@ async function battle() {
 			myTurn.textContent = 'it`s my turn';
 			// finishButton.disabled = 'false';
 			let movesLeft = await MovesLeft();
-			console.log(movesLeft, 'MovesLeft!');
+			// console.log(movesLeft, 'MovesLeft!');
 			if (movesLeft !== 0) {
 				cards.forEach((card, index) => {
 					card.addEventListener('click', async (event) => {
@@ -289,12 +289,12 @@ async function battle() {
 		});
 
 		const myAttack = [...document.querySelectorAll('.my-attack-button')];
-		console.log(myAttack);
+		// console.log(myAttack);
 		myAttack.forEach((button) => {
 			button.addEventListener('click', (event) => {
 				// event.stopPropagation();
 				myCardAttack = button.id;
-				console.log(button.id);
+				// console.log(button.id);
 			});
 		});
 
@@ -341,7 +341,7 @@ async function battle() {
 	finishButton.addEventListener('click', async (btn) => {
 		// let ifChange = await movePost();
 		// console.log(ifChange);
-		console.log(roomData.tableId, 'id');
+		// console.log(roomData.tableId, 'id');
 
 		const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId * 1}`, {
 			method: 'POST',
@@ -351,7 +351,7 @@ async function battle() {
 		});
 		const json = await res.json();
 		let ifChange = JSON.parse(JSON.stringify(json));
-		console.log(ifChange);
+		// console.log(ifChange);
 		await cardInHandPost();
 
 		let innerDivs = myCards.querySelectorAll('.card');
@@ -370,7 +370,7 @@ async function battle() {
 }
 
 function createObjectsCard(i, num) {
-	console.log(i);
+	// console.log(i);
 	const card = document.createElement('div');
 	card.className = 'card';
 	card.id = i.Card.id;
@@ -447,7 +447,7 @@ async function cardOnTableGet() {
 }
 
 async function cardOnTablePost(id) {
-	console.log(roomData.tableId, id, 'PUPUPUPUPUPUP');
+	// console.log(roomData.tableId, id, 'PUPUPUPUPUPUP');
 	const response = await fetch(`http://127.0.0.1:3000/cardsOnTable/${roomData.tableId}`, {
 		method: 'POST',
 		headers: {
@@ -476,7 +476,7 @@ async function cardInHandPost(numberOfCards = 3) {
 	});
 }
 async function cardAttackPost() {
-	// console.log(myCardAttack, opponentCardAttack, 'IDID');
+	// // console.log(myCardAttack, opponentCardAttack, 'IDID');
 	const res = await fetch(`http://127.0.0.1:3000/attack`, {
 		method: 'POST',
 		headers: {
@@ -490,7 +490,7 @@ async function cardAttackPost() {
 	});
 }
 async function cardAttackMainPost() {
-	console.log(myCardAttack, 'IDID');
+	// console.log(myCardAttack, 'IDID');
 	const res = await fetch(`http://127.0.0.1:3000/attack-player`, {
 		method: 'POST',
 		headers: {
