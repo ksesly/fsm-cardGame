@@ -237,7 +237,7 @@ body {
 }
 .opponent-name-and-health {
     width: 100px;
-    height: 200px;
+    height: 100px;
     display: flex;
     flex-direction: column;
     border-radius: 0 0 15px 15px ;

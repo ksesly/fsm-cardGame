@@ -2,7 +2,7 @@ var socket;
 let createBattleSection, battleSection, opponent, opponentCards, opponentNameAndHealth, myOpponentLogin;
 let myOpponentHealth, playingBoard, finishButton, opponentField, myField;
 let me, myNameAndHealth, myLogin, myHealth;
-let myTurn, myCards, myEnergy;
+let myTurn, myCards, myEnergy, opponentAttackButton;
 
 let myCardAttack, opponentCardAttack;
 
@@ -167,6 +167,10 @@ async function battle() {
 	myOpponentLogin.textContent = roomData.users.secondPlayer.login;
 	myOpponentHealth = opponentNameAndHealth.appendChild(document.createElement('p'));
 	myOpponentHealth.className = 'my-opponent-health-p';
+	opponentAttackButton = opponentNameAndHealth.appendChild(document.createElement('button'));
+	opponentAttackButton.className = 'opponent-attack-button';
+	opponentAttackButton.textContent = 'Attack me!'
+
 
 	playingBoard = battleSection.appendChild(document.createElement('div'));
 	playingBoard.className = 'playing-board';
@@ -303,6 +307,13 @@ async function battle() {
 			})
 		})
 
+
+		const mainOpponentAttack = document.querySelector('.opponent-attack-button');
+		mainOpponentAttack.addEventListener('click', async () => {
+			const temp = await cardAttackMainPost();
+			console.log(temp);
+			
+		})
 	});
 
 	finishButton.addEventListener('click', async (btn) => {
@@ -454,6 +465,21 @@ async function cardAttackPost() {
 		},
 		body: JSON.stringify({tableId: roomData.tableId, attackingCardId: myCardAttack, targetCardId: opponentCardAttack}),
 	});
+	
+}
+async function cardAttackMainPost() {
+	console.log(myCardAttack, opponentCardAttack, 'IDID' )
+	const res = await fetch(`http://127.0.0.1:3000/attack-player`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({tableId: roomData.tableId, attackingCardId: myCardAttack}),
+	});
+	const json = await res.json();
+	
+	return JSON.parse(JSON.stringify(json));
+	
 	
 }
 
