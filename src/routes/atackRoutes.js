@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Sequelize } = require('sequelize');
 const protected = require('../protected');
-const { CardOnTable, Card } = require('../models/models');
+const { CardOnTable, Card, Table } = require('../models/models');
 
 router.route('/attack').post(protected, async (req, res) => {
 	// returns status 0 if kill, status 1 if not
@@ -49,6 +49,45 @@ router.route('/attack').post(protected, async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: error });
+	}
+});
+
+router.route('/attack-player').post(protected, async (req, res) => {
+	// 0 - player killed, 1 - player damaged
+	try {
+		const { attackingCardId, tableId } = req.body;
+
+		const table = await Table.findByPk(tableId);
+		const attackingCard = await CardOnTable.findOne({
+			where: {
+				id: attackingCardId,
+				table_id: tableId,
+				player_id: req.user.id,
+			},
+			include: {
+				model: Card,
+				as: 'Card',
+				attributes: ['damage', 'defence'],
+			},
+		});
+		if (!table) return res.status(404).json({ error: 'Table not found' });
+		let health;
+		if (table.player_1 === req.user.id) {
+			health = 'health_p2';
+		} else {
+			health = 'health_p1';
+		}
+		table[health] -= attackingCard.Card.damage;
+		if (table[health] <= 0) {
+			await table.save();
+			return res.status(200).json({ message: 'Player killed', status: 0, table });
+		}
+
+		await table.save();
+		return res.status(200).json({ message: 'Player damaged', status: 1, table });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: error.message });
 	}
 });
 
