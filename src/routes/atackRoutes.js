@@ -84,7 +84,7 @@ router.route('/attack-player').post(protected, async (req, res) => {
 		}
 
 		await table.save();
-		return res.status(200).json({ message: 'Player damaged', status: 1, table });
+		return res.status(200).json({ message: 'Player damaged', status: 1, enemyHP: table[health], table });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: error.message });

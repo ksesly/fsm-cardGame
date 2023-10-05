@@ -232,6 +232,9 @@ async function battle() {
 						isActive = true;
 						myField.style.border = '5px solid red';
 						myField.addEventListener('click', async () => {
+							// let movesLeft = await MovesLeft();
+							// console.log(movesLeft);
+							// if (isActive && movesLeft > 0) {
 							if (isActive) {
 								cardId = card.id * 1;
 								await cardOnTablePost(cardId);
@@ -397,6 +400,17 @@ async function cardInHandPost(numberOfCards = 3) {
 		body: JSON.stringify({ numberOfCardsToAdd: numberOfCards }),
 	});
 }
+
+// async function MovesLeft() {
+// 	const res = await fetch(`http://127.0.0.1:3000/howManyMovesLeft/${roomData.tableId}`, {
+// 		method: 'GET',
+// 		headers: {
+// 			'Content-Type': 'application/json',
+// 		},
+// 	});
+// 	const json = await res.json();
+// 	return JSON.parse(JSON.stringify(json)).MovesLeft;
+// }
 
 // async function movePost() {
 // 	const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId}`, {
