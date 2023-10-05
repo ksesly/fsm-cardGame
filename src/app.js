@@ -40,11 +40,20 @@ app.route('/createBattle').get(protected, (req, res) => {
 // 	res.end('Hello World!');
 // });
 //
-// app.all('*', (req, res) => {
-// 	console.log(req.url);
-// 	res.render(__dirname + '/views/error.html', {
-// 		error: `Can't find ${req.originalUrl} on this server :# Please use only /login /register /homepage /reminder`,
-// 	});
-// });
+app.all('*', (req, res) => {
+	if (req.headers.cookie && req.headers.cookie.search(/authorization/) >= 0) {
+		req.headers['authorization'] = req.headers.cookie
+			.slice(req.headers.cookie.search('authorization'))
+			.replace('authorization=', '');
+	}
+	let token;
+	if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+		token = req.headers.authorization.split(' ')[1];
+	}
+	if (!token) {
+		res.redirect('/login');
+	}
+	res.redirect('/lobby');
+});
 
 module.exports = app;
