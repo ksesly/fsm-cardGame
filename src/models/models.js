@@ -87,6 +87,21 @@ const Table = sequelize.define('Table', {
 		allowNull: false,
 		defaultValue: 20,
 	},
+	mana_p1: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+		defaultValue: 3,
+	},
+	mana_p2: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+		defaultValue: 3,
+	},
+	mana_per_move: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+		defaultValue: 3,
+	},
 	move: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
@@ -207,7 +222,7 @@ async function addStarWarsCards() {
 // 	.sync({ alter: true })
 // 	.then(() => {
 // 		console.log('Database and tables synced.');
-// 		// addStarWarsCards();
+// 		addStarWarsCards();
 // 	})
 // 	.catch((error) => {
 // 		console.error('Error syncing database:', error);

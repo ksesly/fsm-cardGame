@@ -71,7 +71,6 @@ io.on('connection', (socket) => {
 
 				io.to(roomNo).emit('roomClosed', newTable);
 
-				// Delete the room from the local memory
 				delete rooms[roomNo];
 			}
 
@@ -80,7 +79,16 @@ io.on('connection', (socket) => {
 			console.error('Error during findingRoom:', error);
 		}
 	});
+	// socket.on('whosMove', async (roomNo, userId) => {
+	// 	try {
+	// 		const table = await Table.findOne({ where: { id: roomNo, move: userId } });
 
+	// 		if (table) socket.emit('yourMove', { yourTurn: true });
+	// 		else socket.emit('yourMove', { yourTurn: false });
+	// 	} catch (error) {
+	// 		console.error('Error during whosMove:', error);
+	// 	}
+	// });
 	socket.on('buttonPressed', (clientRoom) => {
 		console.log('buttonPressed ' + clientRoom);
 		io.to(clientRoom).emit('switchFromServer');

@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { TableCardDeck, Card, PlayerHand, CardOnTable } = require('../db');
+const { TableCardDeck, Card, PlayerHand, CardOnTable, Table } = require('../db');
 const protected = require('../protected');
 const router = express.Router();
 
@@ -120,4 +120,24 @@ router
 			res.status(500).json({ error: error });
 		}
 	});
+router.route('/changeTurn/:tableId').post(protected, async (req, res) => {
+	const tableId = req.params.tableId;
+
+	try {
+		const table = await Table.findByPk(tableId);
+
+		if (!table) return res.status(404).json({ error: 'Table not found' });
+		if (table.mana_per_move < 10 && table.mana_p1 === table.mana_p2) table.mana_per_move += 1;
+		if (table.move === table.player_1) table.mana_p1 = table.mana_per_move;
+		else table.mana_p2 = table.mana_per_move;
+		table.move = table.move === table.player_1 ? table.player_2 : table.player_1;
+
+		await table.save();
+		res.status(200).json({ message: 'Turn changed successfully', table });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error });
+	}
+});
+
 module.exports = router;
