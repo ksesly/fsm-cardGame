@@ -243,7 +243,6 @@ async function battle() {
 
 							if (isActive && (await MovesLeft()) > 0) {
 								// if (isActive) {
-								console.log('poxyi na moves left', await MovesLeft());
 								cardId = card.id * 1;
 								await cardOnTablePost(cardId);
 								socket.emit('render_table', roomData.roomNo);
@@ -315,8 +314,6 @@ async function battle() {
 			// roomData.users.secondPlayer.health = temp.enemyHP;
 			// myOpponentHealth.textContent = roomData.users.secondPlayer.health;
 			socket.emit('render_hp', roomData.roomNo);
-
-
 		});
 	});
 
@@ -350,9 +347,6 @@ async function battle() {
 		socket.emit('render_table', roomData.roomNo);
 	});
 }
-
-
-
 
 function createObjectsCard(i, num) {
 	console.log(i);
@@ -541,23 +535,26 @@ async function renderAll() {
 		// finishButton.disabled = 'false';
 		cards.forEach((card, index) => {
 			card.addEventListener('click', async () => {
-				if (!isActive) {
-					card.style.border = '5px solid red';
-					isActive = true;
-					myField.style.border = '5px solid red';
+				let movesLeft = await MovesLeft();
+				if (movesLeft !== 0) {
+					if (!isActive) {
+						card.style.border = '5px solid red';
+						isActive = true;
+						myField.style.border = '5px solid red';
 
-					if (isActive) {
-						cardId = card.id * 1;
-						await cardOnTablePost(cardId);
-						socket.emit('render_table', roomData.roomNo);
-						myField.innerHTML = '';
-						card.remove();
-						roomData.myDeck = await cardInHandGet();
+						if (isActive) {
+							cardId = card.id * 1;
+							await cardOnTablePost(cardId);
+							socket.emit('render_table', roomData.roomNo);
+							myField.innerHTML = '';
+							card.remove();
+							roomData.myDeck = await cardInHandGet();
+						}
+					} else {
+						card.style.border = 'none';
+						isActive = false;
+						myField.style.border = 'none';
 					}
-				} else {
-					card.style.border = 'none';
-					isActive = false;
-					myField.style.border = 'none';
 				}
 			});
 		});
