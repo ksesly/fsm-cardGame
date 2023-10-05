@@ -93,4 +93,7 @@ io.on('connection', (socket) => {
 		console.log('buttonPressed ' + clientRoom);
 		io.to(clientRoom).emit('switchFromServer');
 	});
+	socket.on('render_table', (roomNumber) => {
+		io.to(roomNumber).emit('render_table_from_server');
+	})
 });
