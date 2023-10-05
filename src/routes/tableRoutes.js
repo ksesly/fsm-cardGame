@@ -140,12 +140,11 @@ router.route('/changeTurn/:tableId').post(protected, async (req, res) => {
 	}
 });
 
-router.route('isMyTurn/:tableId').get(protected, async (req, res) => {
+router.route('/isMyTurn/:tableId').get(protected, async (req, res) => {
 	const tableId = req.params.tableId;
 
 	try {
 		const table = await Table.findByPk(tableId);
-
 		if (!table) return res.status(404).json({ error: 'Table not found' });
 
 		res.status(200).json({ yourMove: table.move === req.user.id });

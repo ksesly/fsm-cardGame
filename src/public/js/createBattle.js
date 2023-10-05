@@ -138,7 +138,7 @@ switchBtn.addEventListener('click', () => {
 	});
 });
 
-function battle() {
+async function battle() {
 	counterElement.style.display = 'none';
 	const createBattleSection = document.querySelector('.create-battle');
 	const battleSection = document.querySelector('.battle');
@@ -165,8 +165,9 @@ function battle() {
 
 	const finishButton = playingBoard.appendChild(document.createElement('button'));
 	finishButton.classList = 'finish-button';
+	finishButton.style.disabled = 'true';
 	finishButton.textContent = 'finish';
-
+	// finishButton.addEventListener('click', (btn) => {});
 	const opponentField = playingBoard.appendChild(document.createElement('div'));
 	opponentField.className = 'opponent-field';
 	const myField = playingBoard.appendChild(document.createElement('div'));
@@ -202,70 +203,39 @@ function battle() {
 
 	let isActive = false;
 	let cardId = null;
-	cards.forEach((card) => {
-		card.addEventListener('click', () => {
-			if (!isActive) {
-				card.style.border = '5px solid red';
-				isActive = true;
-				myField.style.border = '5px solid red';
-				// card.setAttribute('active', 'true');
-				myField.addEventListener('click', async () => {
-					if (isActive) {
-						cardId = card.id * 1;
-
-						await cardOnTablePost(cardId);
-						socket.emit('render_table', roomData.roomNo);
-						myField.innerHTML = '';
-						card.remove();
-						roomData.myDeck = await cardInHandGet();
-						// roomData.myDeck.forEach(i => {
-						// 	const card = createCard(i);
-						// 	myCards.appendChild(card);
-						// });
-
-						// console.log(roomData.cardsOnTable);
-						// roomData.cardsOnTable.forEach(i => {
-
-						// 	console.log('render card on the table time', i);
-						// 	// console.log(i);
-						// 	// const card = createCard(i);
-
-						// 	const card = document.createElement('div');
-						// 	// card.id = i.Card.id;
-						// 	card.className = 'card';
-						// 	const title = card.appendChild(document.createElement('p'));
-						// 	title.className = 'card-name';
-						// 	title.textContent = i.Card.title;
-						// 	const photo = card.appendChild(document.createElement('div'));
-						// 	photo.style.backgroundImage = 'url(' + i.Card.image + ')';
-						// 	photo.className = 'photo';
-						// 	const description = card.appendChild(document.createElement('div'));
-						// 	description.className = 'description';
-						// 	description.textContent = i.Card.description;
-						// 	const damage = card.appendChild(document.createElement('p'));
-						// 	damage.className = 'damage';
-						// 	damage.textContent = 'damage: ' + i.Card.damage;
-						// 	const defence = card.appendChild(document.createElement('p'));
-						// 	defence.className = 'defence';
-						// 	defence.textContent = 'defence: ' + i.Card.defence;
-						// 	const cost = card.appendChild(document.createElement('p'));
-						// 	cost.className = 'cost';
-						// 	cost.textContent = 'cost: ' + i.Card.cost;
-						// 	// return card;
-
-						// 	myField.appendChild(card);
-						// });
-					}
-				});
-			} else {
-				card.style.border = 'none';
-				isActive = false;
-				myField.style.border = 'none';
-				// card.setAttribute('active', 'false');
-			}
-		});
+	let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
+		method: 'GET',
 	});
+	const json = await response_turn.json();
+	if (json.yourMove) {
+		finishButton.style.disabled = 'false';
+		cards.forEach((card) => {
+			card.addEventListener('click', () => {
+				if (!isActive) {
+					card.style.border = '5px solid red';
+					isActive = true;
+					myField.style.border = '5px solid red';
+					// card.setAttribute('active', 'true');
+					myField.addEventListener('click', async () => {
+						if (isActive) {
+							cardId = card.id * 1;
 
+							await cardOnTablePost(cardId);
+							socket.emit('render_table', roomData.roomNo);
+							myField.innerHTML = '';
+							card.remove();
+							roomData.myDeck = await cardInHandGet();
+						}
+					});
+				} else {
+					card.style.border = 'none';
+					isActive = false;
+					myField.style.border = 'none';
+					// card.setAttribute('active', 'false');
+				}
+			});
+		});
+	}
 	socket.on('render_table_from_server', async () => {
 		roomData.cardsOnTable = await cardOnTableGet();
 		let myCard = roomData.cardsOnTable.filter((card) => {
