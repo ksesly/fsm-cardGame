@@ -161,7 +161,7 @@ body {
     color: white;
     font-size: 16px; 
 }
-.my-login-p, .my-health-p, .my-opponent-login-p {
+.my-login-p, .my-health-p, .my-opponent-login-p, .my-opponent-health-p {
     font-size: 16px;
     color: rgb(255, 49, 163);
     /* position: absolute; */
@@ -222,6 +222,16 @@ body {
     display: flex;
     flex-direction: column;
     border-radius: 15px 15px 0 0 ;
+    border: 2px solid black;
+    background-color: bisque;
+    align-items: center;
+}
+.opponent-name-and-health {
+    width: 100px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 0 15px 15px ;
     border: 2px solid black;
     background-color: bisque;
     align-items: center;

@@ -151,9 +151,14 @@ async function battle() {
 	const opponent = battleSection.appendChild(document.createElement('div'));
 	opponent.className = 'opponent';
 
-	const myOpponentLogin = opponent.appendChild(document.createElement('p'));
+	const opponentNameAndHealth = opponent.appendChild(document.createElement('div'));
+	opponentNameAndHealth.className = 'opponent-name-and-health';
+	const myOpponentLogin = opponentNameAndHealth.appendChild(document.createElement('p'));
 	myOpponentLogin.className = 'my-opponent-login-p';
 	myOpponentLogin.textContent = roomData.users.secondPlayer.login;
+	const myOpponentHealth = opponentNameAndHealth.appendChild(document.createElement('p'));
+	myOpponentHealth.className = 'my-opponent-health-p';
+	myOpponentHealth.textContent = 'health: ' + roomData.users.secondPlayer.health;
 
 	const opponentCards = opponent.appendChild(document.createElement('div'));
 	opponentCards.className = 'opponent-cards-div';
@@ -167,7 +172,7 @@ async function battle() {
 	finishButton.classList = 'finish-button';
 	finishButton.style.disabled = 'true';
 	finishButton.textContent = 'finish';
-	// finishButton.addEventListener('click', (btn) => {});
+	
 	const opponentField = playingBoard.appendChild(document.createElement('div'));
 	opponentField.className = 'opponent-field';
 	const myField = playingBoard.appendChild(document.createElement('div'));
@@ -215,11 +220,9 @@ async function battle() {
 					card.style.border = '5px solid red';
 					isActive = true;
 					myField.style.border = '5px solid red';
-					// card.setAttribute('active', 'true');
 					myField.addEventListener('click', async () => {
 						if (isActive) {
 							cardId = card.id * 1;
-
 							await cardOnTablePost(cardId);
 							socket.emit('render_table', roomData.roomNo);
 							myField.innerHTML = '';
@@ -231,7 +234,6 @@ async function battle() {
 					card.style.border = 'none';
 					isActive = false;
 					myField.style.border = 'none';
-					// card.setAttribute('active', 'false');
 				}
 			});
 		});
@@ -248,12 +250,8 @@ async function battle() {
 		opponentField.innerHTML = '';
 
 		myCard.forEach((i) => {
-			// console.log('render card on the table time', i);
-			// console.log(i);
-			// const card = createCard(i);
-
 			const card = document.createElement('div');
-			// card.id = i.Card.id;
+			card.id = i.Card.id;
 			card.className = 'card';
 			const title = card.appendChild(document.createElement('p'));
 			title.className = 'card-name';
@@ -273,18 +271,12 @@ async function battle() {
 			const cost = card.appendChild(document.createElement('p'));
 			cost.className = 'cost';
 			cost.textContent = 'cost: ' + i.Card.cost;
-			// return card;
-
 			myField.appendChild(card);
 		});
 		enemyCard.forEach((i) => {
-			// console.log('render card on the table time', i);
-			// console.log(i);
-			// const card = createCard(i);
-
 			const card = document.createElement('div');
-			// card.id = i.Card.id;
 			card.className = 'card';
+			card.id = i.Card.id;
 			const title = card.appendChild(document.createElement('p'));
 			title.className = 'card-name';
 			title.textContent = i.Card.title;
@@ -303,10 +295,14 @@ async function battle() {
 			const cost = card.appendChild(document.createElement('p'));
 			cost.className = 'cost';
 			cost.textContent = 'cost: ' + i.Card.cost;
-			// return card;
-
 			opponentField.appendChild(card);
 		});
+	});
+	
+	
+	finishButton.addEventListener('click', async (btn) => {
+		await movePost();
+		await cardInHandPost();
 	});
 }
 
@@ -362,12 +358,23 @@ async function cardInHandGet() {
 	const json = await response.json();
 	return (roomData.myDeck = JSON.parse(JSON.stringify(json)));
 }
-async function cardInHandPost() {
+
+async function cardInHandPost(numberOfCards = 3) {
 	const res = await fetch(`http://127.0.0.1:3000/getHandCard/${roomData.tableId}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ numberOfCardsToAdd: 3 }),
+		body: JSON.stringify({ numberOfCardsToAdd: numberOfCards }),
 	});
 }
+
+async function movePost() {
+	const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+}
+
