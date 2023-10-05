@@ -175,4 +175,18 @@ router.route('/howManyMovesLeft/:tableId').get(protected, async (req, res) => {
 		res.status(500).json({ error });
 	}
 });
+router.route('/getMyHp/:tableId').get(protected, async (req, res) => {
+	const tableId = req.params.tableId;
+
+	try {
+		const table = await Table.findByPk(tableId);
+		if (!table) return res.status(404).json({ error: 'Table not found' });
+
+		res.status(200).json({ hp: table.player_1 === req.user.id ? table.health_p1 : table.health_p2 });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error });
+	}
+});
+
 module.exports = router;

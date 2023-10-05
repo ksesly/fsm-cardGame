@@ -230,31 +230,35 @@ async function battle() {
 		if (json.yourMove) {
 			myTurn.textContent = 'it`s my turn';
 			// finishButton.disabled = 'false';
-			cards.forEach((card, index) => {
-				card.addEventListener('click', async (event) => {
-					event.stopPropagation();
-					if (!isActive) {
-						card.style.border = '5px solid red';
-						isActive = true;
-						myField.style.border = '5px solid red';
-						// let movesLeft = await MovesLeft();
-						// console.log(movesLeft);
-						// if (isActive && movesLeft > 0) {
-						if (isActive) {
-							cardId = card.id * 1;
-							await cardOnTablePost(cardId);
-							socket.emit('render_table', roomData.roomNo);
-							myField.innerHTML = '';
-							card.remove();
-							roomData.myDeck = await cardInHandGet();
+			let movesLeft = await MovesLeft();
+			console.log(movesLeft, 'MovesLeft!');
+			if (movesLeft !== 0) {
+				cards.forEach((card, index) => {
+					card.addEventListener('click', async (event) => {
+						event.stopPropagation();
+						if (!isActive) {
+							card.style.border = '5px solid red';
+							isActive = true;
+							myField.style.border = '5px solid red';
+
+							if (isActive && (await MovesLeft()) > 0) {
+								// if (isActive) {
+								console.log('poxyi na moves left', await MovesLeft());
+								cardId = card.id * 1;
+								await cardOnTablePost(cardId);
+								socket.emit('render_table', roomData.roomNo);
+								myField.innerHTML = '';
+								card.remove();
+								roomData.myDeck = await cardInHandGet();
+							}
+						} else {
+							card.style.border = 'none';
+							isActive = false;
+							myField.style.border = 'none';
 						}
-					} else {
-						card.style.border = 'none';
-						isActive = false;
-						myField.style.border = 'none';
-					}
+					});
 				});
-			});
+			}
 		} else {
 			myTurn.textContent = 'it`s not my turn';
 		}
@@ -470,16 +474,16 @@ async function cardAttackMainPost() {
 	return JSON.parse(JSON.stringify(json));
 }
 
-// async function MovesLeft() {
-// 	const res = await fetch(`http://127.0.0.1:3000/howManyMovesLeft/${roomData.tableId}`, {
-// 		method: 'GET',
-// 		headers: {
-// 			'Content-Type': 'application/json',
-// 		},
-// 	});
-// 	const json = await res.json();
-// 	return JSON.parse(JSON.stringify(json)).MovesLeft;
-// }
+async function MovesLeft() {
+	const res = await fetch(`http://127.0.0.1:3000/howManyMovesLeft/${roomData.tableId}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+	const json = await res.json();
+	return JSON.parse(JSON.stringify(json)).movesLeft;
+}
 
 // async function movePost() {
 // 	const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId}`, {
