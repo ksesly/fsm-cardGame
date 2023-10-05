@@ -52,6 +52,7 @@ let roomData = {
 		},
 	},
 	myDeck: [],
+	cardsOnTable: [],
 	tableId: 0
 };
 
@@ -86,7 +87,7 @@ switchBtn.addEventListener('click', () => {
 	});
 
 	socket.on('roomClosed', async (table) => {
-		roomData.users.tableId = table.id;
+		roomData.tableId = table.id;
 		roomData.users.firstPlayer.health = table.health_p1;
 		let p = roomData.users.firstPlayer.id === table.player_1 ? table.player_2 : table.player_1;
 		const url = `http://127.0.0.1:3000/getUser/${p}`;
@@ -112,8 +113,8 @@ switchBtn.addEventListener('click', () => {
 				console.error('pupupu', err);
 			});
 
-		console.log(roomData.users);
-		let countdown = 5;
+		// console.log(roomData.users);
+		let countdown = 2;
 
 
 		// may create a funct later
@@ -125,6 +126,10 @@ switchBtn.addEventListener('click', () => {
 			},
 			body: JSON.stringify({ numberOfCardsToAdd: 3 }),
 		});
+		const response = await fetch(`http://127.0.0.1:3000/getHandCard/${table.id}`, {
+			method: 'GET',
+		});
+		
 		
 
 		
@@ -207,6 +212,7 @@ function battle() {
 	const myCards = me.appendChild(document.createElement('div'));
 	myCards.className = 'my-cards-div';
 
+	console.log(roomData.myDeck);
 	roomData.myDeck.forEach(i => {
 		const card = createCard(i);
 		myCards.appendChild(card);
@@ -219,24 +225,44 @@ function battle() {
 	myEnergy.className = 'my-energy-div';
 	myEnergy.textContent = ''
 
+
+	const myCardsOnTableDiv = document.querySelector('.my-field');
 	const cards = [...document.querySelectorAll('.card')];
 	console.log(cards);
 	
 	let isActive = false;
+	let cardId = null;
 	cards.forEach(card => {
+		// console.log(card);
 		card.addEventListener('click', () => {
 			if (!isActive) {
 				card.style.border = '5px solid red';
 				isActive = true;
 				card.setAttribute('active', 'true');
+				myCardsOnTableDiv.style.border = '5px solid red';
+				cardId = card.id * 1;
+				myCardsOnTableDiv.addEventListener('click', async () => {
+					console.log(cardId);
+					await cardOnTablePost(cardId);
+					roomData.cardsOnTable = await cardOnTableGet();
+					console.log(roomData.cardsOnTable);
+					// roomData.cardsOnTable.forEach(i => {
+					// 	const card = createCard(i);
+					// 	myCardsOnTableDiv.appendChild(card);
+					// });
+				})
 			}
 			else {
 				card.style.border = 'none';
 				isActive = false;
 				card.setAttribute('active', 'false');
+				myCardsOnTableDiv.style.border = 'none';
 			}
+			
 		});
 	});
+
+	
 
 }
 
@@ -244,6 +270,7 @@ function battle() {
 
 function createCard(i) {
 	const card = document.createElement('div');
+	card.id = i.id;
 	card.className = 'card';
 	const title = card.appendChild(document.createElement('p'));
 	title.className = 'card-name';
@@ -265,11 +292,27 @@ function createCard(i) {
 	cost.textContent = 'cost: ' + i.cost;
 	return card;
 }
-async function cardResponse() {
+
+
+async function cardOnTableGet() {
 	const response = await fetch(`http://127.0.0.1:3000/cardsOnTable/${roomData.tableId}`, {
 		method: 'GET',
 	});
 	const json = await response.json();
-		console.log(json);
-		roomData.myDeck = JSON.parse(JSON.stringify(json));
+	roomData.cardsOnTable = JSON.parse(JSON.stringify(json));
 }
+
+
+async function cardOnTablePost(id) {
+	console.log(roomData.tableId, id, 'PUPUPUPUPUPUP');
+	const response = await fetch(`http://127.0.0.1:3000/cardsOnTable/${roomData.tableId}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ cardId: id }),
+	});
+	// const json = await response.json();
+	// return roomData.cardsOnTable = JSON.parse(JSON.stringify(json));
+}
+
