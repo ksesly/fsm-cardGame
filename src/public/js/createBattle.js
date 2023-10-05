@@ -220,7 +220,7 @@ async function battle() {
 		const cards = [...document.querySelectorAll('.card')];
 
 		let isActive = false;
-				let cardId = null;
+		let cardId = null;
 		let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
 			method: 'GET',
 		});
@@ -228,7 +228,7 @@ async function battle() {
 		// console.log(json, json.yourMove, '!!!!!!!!!!!!!');
 		if (json.yourMove) {
 			myTurn.textContent = 'it`s my turn';
-// finishButton.disabled = 'false';
+			// finishButton.disabled = 'false';
 			cards.forEach((card, index) => {
 				card.addEventListener('click', async (event) => {
 					event.stopPropagation()
@@ -266,7 +266,14 @@ async function battle() {
 		});
 		myField.innerHTML = '';
 		opponentField.innerHTML = '';
-
+		let innerDivs = myField.querySelectorAll('.card');
+		for (let i = 0; i < innerDivs.length; i++) {
+			myField.removeChild(innerDivs[i]);
+		}
+		let enemyInnerDivs = opponentField.querySelectorAll('.card');
+		for (let i = 0; i < innerDivs.length; i++) {
+			opponentField.removeChild(enemyInnerDivs[i]);
+		}
 		myCard.forEach((i) => {
 			const card = createObjectsCard(i, 0);
 			myField.appendChild(card);
@@ -299,7 +306,7 @@ async function battle() {
 	});
 
 	finishButton.addEventListener('click', async (btn) => {
-// let ifChange = await movePost();
+		// let ifChange = await movePost();
 		// console.log(ifChange);
 		console.log(roomData.tableId, 'id');
 
@@ -312,9 +319,20 @@ async function battle() {
 		const json = await res.json();
 		let ifChange = JSON.parse(JSON.stringify(json));
 		console.log(ifChange);
-		socket.emit('render_table', roomData.roomNo);
 		await cardInHandPost();
-		await cardInHandGet();
+
+		let innerDivs = myCards.querySelectorAll('.card');
+		for (let i = 0; i < innerDivs.length; i++) {
+			myCards.removeChild(innerDivs[i]);
+		}
+
+		roomData.myDeck = await cardInHandGet();
+
+		roomData.myDeck.forEach((i) => {
+			const card = createCard(i);
+			myCards.appendChild(card);
+		});
+		socket.emit('render_table', roomData.roomNo);
 	});
 
 	
@@ -477,7 +495,7 @@ async function renderAll() {
 	const cards = [...document.querySelectorAll('.card')];
 
 	let isActive = false;
-		let cardId = null;
+	let cardId = null;
 	let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
 		method: 'GET',
 	});
