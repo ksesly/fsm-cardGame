@@ -96,4 +96,7 @@ io.on('connection', (socket) => {
 	socket.on('render_table', (roomNumber) => {
 		io.to(roomNumber).emit('render_table_from_server');
 	})
+	socket.on('render_hp', (roomNumber) => {
+		io.to(roomNumber).emit('render_hp_from_server');
+	})
 });

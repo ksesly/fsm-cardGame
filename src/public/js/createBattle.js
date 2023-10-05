@@ -312,6 +312,11 @@ async function battle() {
 		mainOpponentAttack.addEventListener('click', async () => {
 			const temp = await cardAttackMainPost();
 			console.log(temp);
+			// roomData.users.secondPlayer.health = temp.enemyHP;
+			// myOpponentHealth.textContent = roomData.users.secondPlayer.health;
+			socket.emit('render_hp', roomData.roomNo);
+
+
 		});
 	});
 
@@ -345,6 +350,9 @@ async function battle() {
 		socket.emit('render_table', roomData.roomNo);
 	});
 }
+
+
+
 
 function createObjectsCard(i, num) {
 	console.log(i);
