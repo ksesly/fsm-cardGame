@@ -115,6 +115,7 @@ body {
     padding: 10px;
     justify-content: center;
     align-items: center;
+    z-index: 1;
 }
 
 .card {
@@ -194,7 +195,15 @@ body {
     height: 170px;
     padding: 5px;
     border: none;
+    z-index: 9999;
+    position: relative;
 }
+
+.my-attack-button {
+    z-index: 9999;
+    
+}
+
 /* .card:active {
     border: 5px solid yellowgreen;
 } */
@@ -228,7 +237,7 @@ body {
 }
 .opponent-name-and-health {
     width: 100px;
-    height: 200px;
+    height: 100px;
     display: flex;
     flex-direction: column;
     border-radius: 0 0 15px 15px ;
