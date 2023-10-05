@@ -288,6 +288,7 @@ async function battle() {
 		console.log(ifChange);
 		socket.emit('render_table', roomData.roomNo);
 		await cardInHandPost();
+		await cardInHandGet();
 	});
 }
 

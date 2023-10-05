@@ -87,20 +87,11 @@ const Table = sequelize.define('Table', {
 		allowNull: false,
 		defaultValue: 20,
 	},
-	mana_p1: {
+
+	moves_left: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
-		defaultValue: 3,
-	},
-	mana_p2: {
-		type: DataTypes.INTEGER,
-		allowNull: false,
-		defaultValue: 3,
-	},
-	mana_per_move: {
-		type: DataTypes.INTEGER,
-		allowNull: false,
-		defaultValue: 3,
+		defaultValue: 2,
 	},
 	move: {
 		type: DataTypes.INTEGER,
@@ -208,25 +199,166 @@ const starWarsCards = [
 		damage: 6,
 		defence: 4,
 	},
+	{
+		image: 'https://i.etsystatic.com/17372453/r/il/a237f9/1791611739/il_1080xN.1791611739_5uom.jpg',
+		title: 'Captain Rex',
+		description: 'Clone Commander',
+		cost: 4,
+		damage: 6,
+		defence: 8,
+	},
+	{
+		image: 'https://upload.wikimedia.org/wikipedia/en/d/d7/Ahsoka_Tano.png',
+		title: 'Ahsoka Tano',
+		description: 'Jedi Padawan',
+		cost: 3,
+		damage: 7,
+		defence: 5,
+	},
+	{
+		image: 'https://upload.wikimedia.org/wikipedia/en/b/bb/MaulStarWars.jpg',
+		title: 'Darth Maul',
+		description: 'Sith Lord',
+		cost: 5,
+		damage: 9,
+		defence: 6,
+	},
+	{
+		image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6WzoVu0OQYF1Vde7giRaxu2oCUobRYPL6xcyem8EgO-xCEGwhUL3FsSQI0RQ5SKzjkn4&usqp=CAU',
+		title: 'Obi-Wan Kenobi',
+		description: 'Jedi Master',
+		cost: 4,
+		damage: 7,
+		defence: 7,
+	},
+	{
+		image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbffkmG3poyeZb-N4c1A4bLH_8d9t7yqhDCurpgH8Vkw&s',
+		title: 'Princess Amidala',
+		description: 'Galactic Senator',
+		cost: 3,
+		damage: 5,
+		defence: 5,
+	},
+	{
+		image: 'https://static.wikia.nocookie.net/starwars/images/d/d6/Yoda_SWSB.png/revision/latest?cb=20150206140125',
+		title: 'Yoda',
+		description: 'Grand Master',
+		cost: 6,
+		damage: 8,
+		defence: 9,
+	},
+
+	{
+		image: 'https://upload.wikimedia.org/wikipedia/en/3/3e/FettbobaJB.png',
+		title: 'Boba Fett',
+		description: 'Bounty Hunter',
+		cost: 4,
+		damage: 7,
+		defence: 8,
+	},
+	{
+		image: 'https://static.wikia.nocookie.net/starwars/images/e/ec/ChewbaccaCSWE.jpg/revision/latest?cb=20230615051524',
+		title: 'Chewbacca',
+		description: 'Wookiee Warrior',
+		cost: 3,
+		damage: 6,
+		defence: 9,
+	},
+	{
+		image: 'https://upload.wikimedia.org/wikipedia/en/b/be/Han_Solo_depicted_in_promotional_image_for_Star_Wars_%281977%29.jpg',
+		title: 'Han Solo',
+		description: 'Smuggler',
+		cost: 4,
+		damage: 7,
+		defence: 6,
+	},
+	{
+		image: 'https://lumiere-a.akamaihd.net/v1/images/Asajj-Ventress_d5ca9413.jpeg?region=267%2C6%2C562%2C563',
+		title: 'Asajj Ventress',
+		description: 'Sith Assassin',
+		cost: 4,
+		damage: 7,
+		defence: 6,
+	},
+	{
+		image: 'https://static.wikia.nocookie.net/starwars/images/b/b0/Bailrogueone.jpg/revision/latest?cb=20170924232338',
+		title: 'Bail Organa',
+		description: 'Alderaan Senator',
+		cost: 3,
+		damage: 5,
+		defence: 7,
+	},
+	{
+		image: 'https://m.media-amazon.com/images/I/91+5a2Dr+5L._AC_UF1000,1000_QL80_.jpg',
+		title: 'The Mandalorian',
+		description: 'Bounty Hunter',
+		cost: 5,
+		damage: 8,
+		defence: 7,
+	},
+	{
+		image: 'https://upload.wikimedia.org/wikipedia/en/5/54/General_Grievous.png',
+		title: 'General Grievous',
+		description: 'Cyborg General',
+		cost: 4,
+		damage: 9,
+		defence: 5,
+	},
+	{
+		image: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bf/Mace_Windu.png/220px-Mace_Windu.png',
+		title: 'Mace Windu',
+		description: 'Jedi Master',
+		cost: 5,
+		damage: 8,
+		defence: 8,
+	},
+	{
+		image: 'https://media.allure.com/photos/5f8f3d745611fc41904f9aee/16:9/w_2560%2Cc_limit/baby%2520yoda.jpg',
+		title: 'Baby Yoda',
+		description: 'foundling',
+		cost: 3,
+		damage: 6,
+		defence: 6,
+	},
+	{
+		image: 'https://lumiere-a.akamaihd.net/v1/images/Count-Dooku_4f552149.jpeg?region=115%2C0%2C1076%2C808',
+		title: 'Count Dooku',
+		description: 'Sith Lord',
+		cost: 4,
+		damage: 7,
+		defence: 6,
+	},
+	{
+		image: 'https://static.wikia.nocookie.net/starwars/images/4/4d/Aayla_Secura_SWE.png/revision/latest?cb=20211226192019',
+		title: 'Aayla Secura',
+		description: 'Twilek Jedi Knight',
+		cost: 3,
+		damage: 6,
+		defence: 5,
+	},
 ];
 async function addStarWarsCards() {
 	try {
-		await Card.bulkCreate(starWarsCards);
-		console.log('Star Wars cards added to the database.');
+		const existingCards = await Card.findAll();
+		if (existingCards.length === 0) {
+			await Card.bulkCreate(starWarsCards);
+			console.log('Star Wars cards added to the database.');
+		} else console.log('Star Wars cards already exist in the database.');
 	} catch (error) {
 		console.error('Error adding Star Wars cards:', error);
 	}
 }
+// MAKE TRUE!!!!!!!!!!!!
+sequelize
+	.sync({ alter: false })
+	.then(() => {
+		console.log('Database and tables synced.');
 
-// sequelize
-// 	.sync({ alter: true })
-// 	.then(() => {
-// 		console.log('Database and tables synced.');
-// 		addStarWarsCards();
-// 	})
-// 	.catch((error) => {
-// 		console.error('Error syncing database:', error);
-// 	});
+		addStarWarsCards();
+	})
+	.catch((error) => {
+		console.error('Error syncing database:', error);
+	});
 
 module.exports = {
 	User,
