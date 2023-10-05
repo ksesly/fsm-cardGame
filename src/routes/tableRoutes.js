@@ -76,10 +76,9 @@ router
 				},
 				include: {
 					model: Card,
-					as: 'Card',
 					attributes: ['id', 'image', 'title', 'description', 'cost', 'damage', 'defence'],
 				},
-				attributes: [],
+				attributes: ['player_id', 'health', 'id'],
 			});
 
 			res.status(200).json(cardsOnTable);

@@ -181,7 +181,7 @@ TableCardDeck.belongsTo(Card, { foreignKey: 'card_id' });
 
 PlayerHand.belongsTo(Card, { foreignKey: 'card_id' });
 // PlayerHand.belongsTo(TableCardDeck, { foreignKey: 'table_id' });
-CardOnTable.belongsTo(Card, { foreignKey: 'card_id', as: 'Card' });
+CardOnTable.belongsTo(Card, { foreignKey: 'card_id' });
 
 const starWarsCards = [
 	{
