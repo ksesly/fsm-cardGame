@@ -55,7 +55,7 @@ let roomData = {
 	},
 	myDeck: [],
 	cardsOnTable: [],
-	tableId: 0
+	tableId: 0,
 };
 
 const switchBtn = document.getElementById('switchButton');
@@ -118,13 +118,10 @@ switchBtn.addEventListener('click', () => {
 		// console.log(roomData.users);
 		let countdown = 2;
 
-
 		// may create a funct later
 
 		await cardInHandPost();
 		await cardInHandGet();
-
-
 
 		const countdownInterval = setInterval(() => {
 			counterElement.className = 'counter';
@@ -151,7 +148,6 @@ function battle() {
 
 	// opponent
 
-
 	const opponent = battleSection.appendChild(document.createElement('div'));
 	opponent.className = 'opponent';
 
@@ -162,9 +158,7 @@ function battle() {
 	const opponentCards = opponent.appendChild(document.createElement('div'));
 	opponentCards.className = 'opponent-cards-div';
 
-
 	//playing board
-
 
 	const playingBoard = battleSection.appendChild(document.createElement('div'));
 	playingBoard.className = 'playing-board';
@@ -178,15 +172,11 @@ function battle() {
 	const myField = playingBoard.appendChild(document.createElement('div'));
 	myField.className = 'my-field';
 
-
-
 	const me = battleSection.appendChild(document.createElement('div'));
 	me.className = 'me';
 
-	
-
 	const myNameAndHealth = me.appendChild(document.createElement('div'));
-	myNameAndHealth.className = 'name-and-health'
+	myNameAndHealth.className = 'name-and-health';
 	const myLogin = myNameAndHealth.appendChild(document.createElement('p'));
 	myLogin.className = 'my-login-p';
 	myLogin.textContent = roomData.users.firstPlayer.login;
@@ -194,41 +184,35 @@ function battle() {
 	myHealth.className = 'my-health-p';
 	myHealth.textContent = 'health: ' + roomData.users.firstPlayer.health;
 
-
 	const myCards = me.appendChild(document.createElement('div'));
 	myCards.className = 'my-cards-div';
 
 	console.log('render card in hadn the first time', roomData.myDeck);
 	console.log(roomData.myDeck);
-	roomData.myDeck.forEach(i => {
+	roomData.myDeck.forEach((i) => {
 		const card = createCard(i);
 		myCards.appendChild(card);
 	});
 
-
-
-
 	const myEnergy = me.appendChild(document.createElement('div'));
 	myEnergy.className = 'my-energy-div';
-	myEnergy.textContent = ''
+	myEnergy.textContent = '';
 
-
-	
 	const cards = [...document.querySelectorAll('.card')];
-	
+
 	let isActive = false;
 	let cardId = null;
-	cards.forEach(card => {
+	cards.forEach((card) => {
 		card.addEventListener('click', () => {
-		  	if (!isActive) {
+			if (!isActive) {
 				card.style.border = '5px solid red';
 				isActive = true;
 				myField.style.border = '5px solid red';
 				// card.setAttribute('active', 'true');
 				myField.addEventListener('click', async () => {
-					if (isActive) { 
+					if (isActive) {
 						cardId = card.id * 1;
-						
+
 						await cardOnTablePost(cardId);
 						socket.emit('render_table', roomData.roomNo);
 						myField.innerHTML = '';
@@ -238,16 +222,13 @@ function battle() {
 						// 	const card = createCard(i);
 						// 	myCards.appendChild(card);
 						// });
-					
 
-						
 						// console.log(roomData.cardsOnTable);
 						// roomData.cardsOnTable.forEach(i => {
-							
+
 						// 	console.log('render card on the table time', i);
 						// 	// console.log(i);
 						// 	// const card = createCard(i);
-							
 
 						// 	const card = document.createElement('div');
 						// 	// card.id = i.Card.id;
@@ -260,7 +241,7 @@ function battle() {
 						// 	photo.className = 'photo';
 						// 	const description = card.appendChild(document.createElement('div'));
 						// 	description.className = 'description';
-						// 	description.textContent = i.Card.description; 
+						// 	description.textContent = i.Card.description;
 						// 	const damage = card.appendChild(document.createElement('p'));
 						// 	damage.className = 'damage';
 						// 	damage.textContent = 'damage: ' + i.Card.damage;
@@ -276,25 +257,30 @@ function battle() {
 						// });
 					}
 				});
-		  	} else {
+			} else {
 				card.style.border = 'none';
 				isActive = false;
 				myField.style.border = 'none';
 				// card.setAttribute('active', 'false');
-		  	}
+			}
 		});
-	
-		
 	});
 
 	socket.on('render_table_from_server', async () => {
 		roomData.cardsOnTable = await cardOnTableGet();
+		let myCard = roomData.cardsOnTable.filter((card) => {
+			return card.player_id === roomData.users.firstPlayer.id;
+		});
+		let enemyCard = roomData.cardsOnTable.filter((card) => {
+			return card.player_id === roomData.users.secondPlayer.id;
+		});
 		myField.innerHTML = '';
-		roomData.cardsOnTable.forEach(i => { 
-			console.log('render card on the table time', i);
+		opponentField.innerHTML = '';
+
+		myCard.forEach((i) => {
+			// console.log('render card on the table time', i);
 			// console.log(i);
 			// const card = createCard(i);
-			
 
 			const card = document.createElement('div');
 			// card.id = i.Card.id;
@@ -307,7 +293,7 @@ function battle() {
 			photo.className = 'photo';
 			const description = card.appendChild(document.createElement('div'));
 			description.className = 'description';
-			description.textContent = i.Card.description; 
+			description.textContent = i.Card.description;
 			const damage = card.appendChild(document.createElement('p'));
 			damage.className = 'damage';
 			damage.textContent = 'damage: ' + i.Card.damage;
@@ -320,12 +306,39 @@ function battle() {
 			// return card;
 
 			myField.appendChild(card);
-		})
+		});
+		enemyCard.forEach((i) => {
+			// console.log('render card on the table time', i);
+			// console.log(i);
+			// const card = createCard(i);
+
+			const card = document.createElement('div');
+			// card.id = i.Card.id;
+			card.className = 'card';
+			const title = card.appendChild(document.createElement('p'));
+			title.className = 'card-name';
+			title.textContent = i.Card.title;
+			const photo = card.appendChild(document.createElement('div'));
+			photo.style.backgroundImage = 'url(' + i.Card.image + ')';
+			photo.className = 'photo';
+			const description = card.appendChild(document.createElement('div'));
+			description.className = 'description';
+			description.textContent = i.Card.description;
+			const damage = card.appendChild(document.createElement('p'));
+			damage.className = 'damage';
+			damage.textContent = 'damage: ' + i.Card.damage;
+			const defence = card.appendChild(document.createElement('p'));
+			defence.className = 'defence';
+			defence.textContent = 'defence: ' + i.Card.defence;
+			const cost = card.appendChild(document.createElement('p'));
+			cost.className = 'cost';
+			cost.textContent = 'cost: ' + i.Card.cost;
+			// return card;
+
+			opponentField.appendChild(card);
+		});
 	});
-
 }
-
-
 
 function createCard(i) {
 	const card = document.createElement('div');
@@ -339,7 +352,7 @@ function createCard(i) {
 	photo.className = 'photo';
 	const description = card.appendChild(document.createElement('div'));
 	description.className = 'description';
-	description.textContent = i.description; 
+	description.textContent = i.description;
 	const damage = card.appendChild(document.createElement('p'));
 	damage.className = 'damage';
 	damage.textContent = 'damage: ' + i.damage;
@@ -352,15 +365,13 @@ function createCard(i) {
 	return card;
 }
 
-
 async function cardOnTableGet() {
 	const response = await fetch(`http://127.0.0.1:3000/cardsOnTable/${roomData.tableId}`, {
 		method: 'GET',
 	});
 	const json = await response.json();
-	return roomData.cardsOnTable = JSON.parse(JSON.stringify(json));
+	return (roomData.cardsOnTable = JSON.parse(JSON.stringify(json)));
 }
-
 
 async function cardOnTablePost(id) {
 	console.log(roomData.tableId, id, 'PUPUPUPUPUPUP');
@@ -373,14 +384,13 @@ async function cardOnTablePost(id) {
 	});
 }
 
-
 async function cardInHandGet() {
 	const response = await fetch(`http://127.0.0.1:3000/getHandCard/${roomData.tableId}`, {
 		method: 'GET',
 	});
 
 	const json = await response.json();
-	return roomData.myDeck = JSON.parse(JSON.stringify(json));
+	return (roomData.myDeck = JSON.parse(JSON.stringify(json)));
 }
 async function cardInHandPost() {
 	const res = await fetch(`http://127.0.0.1:3000/getHandCard/${roomData.tableId}`, {
@@ -391,4 +401,3 @@ async function cardInHandPost() {
 		body: JSON.stringify({ numberOfCardsToAdd: 3 }),
 	});
 }
-
