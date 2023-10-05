@@ -31,14 +31,18 @@ router
 		try {
 			const tableId = req.params.tableId;
 			const playerId = req.user.id;
-			const { numberOfCardsToAdd } = req.body;
-
+			const currentNumberOfCards = await PlayerHand.count({
+				where: {
+					table_id: tableId,
+					player_id: playerId,
+				},
+			});
 			const cardsToAdd = await TableCardDeck.findAll({
 				where: {
 					table_id: tableId,
 					player_id: playerId,
 				},
-				limit: numberOfCardsToAdd,
+				limit: 3 - currentNumberOfCards,
 			});
 
 			if (cardsToAdd.length === 0) return res.status(400).json({ error: 'No more cards in the deck.' });
@@ -59,7 +63,7 @@ router
 				})
 			);
 
-			res.status(200).json({ message: `Added ${numberOfCardsToAdd} cards to the player's hand.` });
+			res.status(200).json({ message: `Added ${3 - currentNumberOfCards} cards to the player's hand.` });
 		} catch (error) {
 			console.error('Error adding cards to player hand:', error);
 			res.status(500).json({ error: error });
