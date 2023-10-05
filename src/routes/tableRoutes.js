@@ -94,6 +94,7 @@ router
 		try {
 			const tableId = req.params.tableId;
 			const { cardId } = req.body;
+			const table = await Table.findByPk(tableId);
 			const playerHandCard = await PlayerHand.findOne({
 				where: {
 					table_id: tableId,
@@ -109,6 +110,9 @@ router
 			if (!playerHandCard) {
 				return res.status(400).json({ error: 'Card not found in PlayerHand' });
 			}
+			if (table.moves_left === 0) {
+				return res.status(200).json({ error: 'No more moves left', status: '-1' });
+			}
 			console.log(playerHandCard.Card);
 			const newCard = await CardOnTable.create({
 				player_id: playerHandCard.player_id,
@@ -116,7 +120,8 @@ router
 				table_id: tableId,
 				card_id: playerHandCard.card_id,
 			});
-
+			table.moves_left -= 1;
+			await table.save();
 			await playerHandCard.destroy();
 
 			res.status(200).json({ message: 'Card placed on the table successfully', newCard });
@@ -131,9 +136,7 @@ router.route('/changeTurn/:tableId').post(protected, async (req, res) => {
 		const table = await Table.findByPk(tableId * 1);
 		if (table.move === req.user.id) {
 			if (!table) return res.status(404).json({ error: 'Table not found' });
-			if (table.mana_per_move < 10 && table.mana_p1 === table.mana_p2) table.mana_per_move += 1;
-			if (table.move === table.player_1) table.mana_p1 = table.mana_per_move;
-			else table.mana_p2 = table.mana_per_move;
+			table.moves_left = 2;
 			table.move = table.move === table.player_1 ? table.player_2 : table.player_1;
 
 			await table.save();
