@@ -4,6 +4,8 @@ let myOpponentHealth, playingBoard, finishButton, opponentField, myField;
 let me, myNameAndHealth, myLogin, myHealth;
 let myTurn, myCards, myEnergy;
 
+let myCardAttack, opponentCardAttack;
+
 function createBattle() {
 	const myCreationBattle = document.querySelector('.create-battle');
 	const div = myCreationBattle.appendChild(document.createElement('div'));
@@ -209,6 +211,8 @@ async function battle() {
 		// 	myCards.appendChild(card);
 		// });
 
+		
+
 		myEnergy = me.appendChild(document.createElement('div'));
 		myEnergy.className = 'my-energy-div';
 		myEnergy.textContent = '';
@@ -221,17 +225,18 @@ async function battle() {
 			method: 'GET',
 		});
 		const json = await response_turn.json();
-		console.log(json, json.yourMove, '!!!!!!!!!!!!!');
+		// console.log(json, json.yourMove, '!!!!!!!!!!!!!');
 		if (json.yourMove) {
 			myTurn.textContent = 'it`s my turn';
 // finishButton.disabled = 'false';
 			cards.forEach((card, index) => {
-				card.addEventListener('click', async () => {
+				card.addEventListener('click', async (event) => {
+					event.stopPropagation()
 					if (!isActive) {
 						card.style.border = '5px solid red';
 						isActive = true;
 						myField.style.border = '5px solid red';
-						myField.addEventListener('click', async () => {
+						
 							if (isActive) {
 								cardId = card.id * 1;
 								await cardOnTablePost(cardId);
@@ -240,7 +245,7 @@ async function battle() {
 								card.remove();
 								roomData.myDeck = await cardInHandGet();
 							}
-						});
+						
 					} else {
 						card.style.border = 'none';
 						isActive = false;
@@ -263,13 +268,34 @@ async function battle() {
 		opponentField.innerHTML = '';
 
 		myCard.forEach((i) => {
-			const card = createObjectsCard(i);
+			const card = createObjectsCard(i, 0);
 			myField.appendChild(card);
 		});
 		enemyCard.forEach((i) => {
-			const card = createObjectsCard(i);
+			const card = createObjectsCard(i, 1);
 			opponentField.appendChild(card);
 		});
+
+
+		const myAttack = [...document.querySelectorAll('.my-attack-button')];
+		console.log(myAttack);
+		myAttack.forEach((button) => {
+			button.addEventListener('click', (event) => {
+				// event.stopPropagation();
+				myCardAttack = button.id;
+				console.log(button.id);
+			})
+		})
+
+		const opponentAttack = [...document.querySelectorAll('.enemy-attack-button')];
+		opponentAttack.forEach((button) => {
+			button.addEventListener('click', async (event) => {
+				opponentCardAttack = button.id;
+				await cardAttackPost();
+				socket.emit('render_table', roomData.roomNo);
+			})
+		})
+
 	});
 
 	finishButton.addEventListener('click', async (btn) => {
@@ -290,9 +316,15 @@ async function battle() {
 		await cardInHandPost();
 		await cardInHandGet();
 	});
+
+	
+	
+	
+	
 }
 
-function createObjectsCard(i) {
+function createObjectsCard(i, num) {
+	console.log(i);
 	const card = document.createElement('div');
 	card.className = 'card';
 	card.id = i.Card.id;
@@ -314,10 +346,26 @@ function createObjectsCard(i) {
 	const cost = card.appendChild(document.createElement('p'));
 	cost.className = 'cost';
 	cost.textContent = 'cost: ' + i.Card.cost;
-		return card;
+	if (num === 0) {
+		const attackButton = card.appendChild(document.createElement('button'));
+		attackButton.className = 'my-attack-button';
+		attackButton.textContent = 'Attack';
+		attackButton.id = i.id;
+	}
+	else if (num === 1) {
+		const attackButton = card.appendChild(document.createElement('button'));
+		attackButton.className = 'enemy-attack-button';
+		attackButton.textContent = 'Attack';
+		attackButton.id = i.id;
+	}
+	
+	return card;
 }
 
+
+
 function createCard(i) {
+	
 	const card = document.createElement('div');
 	card.id = i.id;
 	card.className = 'card';
@@ -379,6 +427,17 @@ async function cardInHandPost(numberOfCards = 3) {
 		body: JSON.stringify({ numberOfCardsToAdd: numberOfCards }),
 	});
 }
+async function cardAttackPost() {
+	console.log(myCardAttack, opponentCardAttack, 'IDID' )
+	const res = await fetch(`http://127.0.0.1:3000/attack`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({tableId: roomData.tableId, attackingCardId: myCardAttack, targetCardId: opponentCardAttack}),
+	});
+	
+}
 
 // async function movePost() {
 // 	const res = await fetch(`http://127.0.0.1:3000/changeTurn/${roomData.tableId}`, {
@@ -432,7 +491,7 @@ async function renderAll() {
 					card.style.border = '5px solid red';
 					isActive = true;
 					myField.style.border = '5px solid red';
-					myField.addEventListener('click', async () => {
+					
 						if (isActive) {
 							cardId = card.id * 1;
 							await cardOnTablePost(cardId);
@@ -441,7 +500,7 @@ async function renderAll() {
 							card.remove();
 							roomData.myDeck = await cardInHandGet();
 													}
-					});
+					
 				} else {
 					card.style.border = 'none';
 					isActive = false;
