@@ -8,7 +8,7 @@ router.route('/attack').post(protected, async (req, res) => {
 	// returns status 0 if kill, status 1 if not
 	try {
 		const { attackingCardId, targetCardId, tableId } = req.body;
-
+		const table = await Table.findByPk(tableId);
 		const attackingCard = await CardOnTable.findOne({
 			where: {
 				id: attackingCardId,
@@ -37,7 +37,9 @@ router.route('/attack').post(protected, async (req, res) => {
 			},
 		});
 		if (!attackingCard || !targetCard) return res.status(404).json({ error: 'Card not found' });
+		table.moves_left -= 1;
 		targetCard.health -= attackingCard.Card.damage;
+		await table.save();
 		if (targetCard.health <= 0) {
 			console.log('I am dead');
 			await targetCard.destroy();
@@ -78,6 +80,7 @@ router.route('/attack-player').post(protected, async (req, res) => {
 			health = 'health_p1';
 		}
 		table[health] -= attackingCard.Card.damage;
+		table.moves_left -= 1;
 		if (table[health] <= 0) {
 			await table.save();
 			return res.status(200).json({ message: 'Player killed', status: 0 });

@@ -301,21 +301,27 @@ async function battle() {
 		const opponentAttack = [...document.querySelectorAll('.enemy-attack-button')];
 		opponentAttack.forEach((button) => {
 			button.addEventListener('click', async (event) => {
-				opponentCardAttack = button.id;
-				await cardAttackPost();
-				socket.emit('render_table', roomData.roomNo);
+				let movesLeft = await MovesLeft();
+				if (movesLeft !== 0) {
+					opponentCardAttack = button.id;
+					await cardAttackPost();
+					socket.emit('render_table', roomData.roomNo);
+				}
 			});
 		});
 
 		const mainOpponentAttack = document.querySelector('.opponent-attack-button');
 		mainOpponentAttack.addEventListener('click', async () => {
-			const temp = await cardAttackMainPost();
+			let movesLeft = await MovesLeft();
+			if (movesLeft !== 0) {
+				const temp = await cardAttackMainPost();
 
-			// roomData.users.secondPlayer.health = temp.enemyHP;
-			// myOpponentHealth.textContent = roomData.users.secondPlayer.health;
-			socket.emit('render_hp', roomData.roomNo);
-			// const t =
-			// console.log(t);
+				// roomData.users.secondPlayer.health = temp.enemyHP;
+				// myOpponentHealth.textContent = roomData.users.secondPlayer.health;
+				socket.emit('render_hp', roomData.roomNo);
+				// const t =
+				// console.log(t);
+			}
 		});
 		socket.on('render_hp_from_server', async () => {
 			const chatacterHealth = await healthGet();
