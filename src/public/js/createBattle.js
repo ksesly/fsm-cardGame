@@ -326,10 +326,15 @@ async function battle() {
 		socket.on('render_hp_from_server', async () => {
 			const chatacterHealth = await healthGet();
 			myHealth.textContent = 'health: ' + chatacterHealth.yourHp;
-			myOpponentHealth.textContent = chatacterHealth.enemyHp;
+			myOpponentHealth.textContent = 'health: ' + chatacterHealth.enemyHp;
 
+			roomData.users.secondPlayer.health = chatacterHealth.enemyHp;
 			roomData.users.firstPlayer.health = chatacterHealth.yourHp;
-			roomData.users.secondPlayer.health = 'health: ' + chatacterHealth.enemyHp;
+			if (chatacterHealth.yourHp <= 0) {
+				alert('You lose :(');
+			} else if (chatacterHealth.enemyHp <= 0) {
+				alert('You won!');
+			}
 		});
 	});
 
