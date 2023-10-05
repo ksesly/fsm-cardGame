@@ -1,4 +1,8 @@
 var socket;
+let createBattleSection, battleSection, opponent, opponentCards, opponentNameAndHealth, myOpponentLogin;
+let myOpponentHealth, playingBoard, finishButton, opponentField, myField;
+let me, myNameAndHealth, myLogin, myHealth;
+let myTurn, myCards, myEnergy;
 
 function createBattle() {
 	const myCreationBattle = document.querySelector('.create-battle');
@@ -138,89 +142,98 @@ switchBtn.addEventListener('click', () => {
 	});
 });
 
+
+
 async function battle() {
 	counterElement.style.display = 'none';
-	const createBattleSection = document.querySelector('.create-battle');
-	const battleSection = document.querySelector('.battle');
+	createBattleSection = document.querySelector('.create-battle');
+	battleSection = document.querySelector('.battle');
 
 	createBattleSection.style.display = 'none';
 	battleSection.style.display = 'flex';
 
 	// opponent
 
-	const opponent = battleSection.appendChild(document.createElement('div'));
+	opponent = battleSection.appendChild(document.createElement('div'));
 	opponent.className = 'opponent';
 
-	const opponentNameAndHealth = opponent.appendChild(document.createElement('div'));
-	opponentNameAndHealth.className = 'opponent-name-and-health';
-	const myOpponentLogin = opponentNameAndHealth.appendChild(document.createElement('p'));
-	myOpponentLogin.className = 'my-opponent-login-p';
-	myOpponentLogin.textContent = roomData.users.secondPlayer.login;
-	const myOpponentHealth = opponentNameAndHealth.appendChild(document.createElement('p'));
-	myOpponentHealth.className = 'my-opponent-health-p';
-	myOpponentHealth.textContent = 'health: ' + roomData.users.secondPlayer.health;
-
-	const opponentCards = opponent.appendChild(document.createElement('div'));
+	opponentCards = opponent.appendChild(document.createElement('div'));
 	opponentCards.className = 'opponent-cards-div';
 
-	//playing board
+	opponentNameAndHealth = opponent.appendChild(document.createElement('div'));
+	opponentNameAndHealth.className = 'opponent-name-and-health';
+	myOpponentLogin = opponentNameAndHealth.appendChild(document.createElement('p'));
+	myOpponentLogin.className = 'my-opponent-login-p';
+	myOpponentLogin.textContent = roomData.users.secondPlayer.login;
+	myOpponentHealth = opponentNameAndHealth.appendChild(document.createElement('p'));
+	myOpponentHealth.className = 'my-opponent-health-p';
 
-	const playingBoard = battleSection.appendChild(document.createElement('div'));
+	
+	playingBoard = battleSection.appendChild(document.createElement('div'));
 	playingBoard.className = 'playing-board';
 
-	const finishButton = playingBoard.appendChild(document.createElement('button'));
+	finishButton = playingBoard.appendChild(document.createElement('button'));
 	finishButton.classList = 'finish-button';
-	finishButton.style.disabled = 'true';
+	// finishButton.disabled = 'false';
 	finishButton.textContent = 'finish';
 	
-	const opponentField = playingBoard.appendChild(document.createElement('div'));
+	opponentField = playingBoard.appendChild(document.createElement('div'));
 	opponentField.className = 'opponent-field';
-	const myField = playingBoard.appendChild(document.createElement('div'));
+	myField = playingBoard.appendChild(document.createElement('div'));
 	myField.className = 'my-field';
 
-	const me = battleSection.appendChild(document.createElement('div'));
+	me = battleSection.appendChild(document.createElement('div'));
 	me.className = 'me';
-
-	const myNameAndHealth = me.appendChild(document.createElement('div'));
+	myNameAndHealth = me.appendChild(document.createElement('div'));
 	myNameAndHealth.className = 'name-and-health';
-	const myLogin = myNameAndHealth.appendChild(document.createElement('p'));
+	myLogin = myNameAndHealth.appendChild(document.createElement('p'));
 	myLogin.className = 'my-login-p';
 	myLogin.textContent = roomData.users.firstPlayer.login;
-	const myHealth = myNameAndHealth.appendChild(document.createElement('p'));
+	myHealth = myNameAndHealth.appendChild(document.createElement('p'));
 	myHealth.className = 'my-health-p';
-	myHealth.textContent = 'health: ' + roomData.users.firstPlayer.health;
 
-	const myCards = me.appendChild(document.createElement('div'));
-	myCards.className = 'my-cards-div';
+	renderAll();
+	socket.on('render_table_from_server', async () => {
+		// renderAll();
+		myOpponentHealth.textContent = 'health: ' + roomData.users.secondPlayer.health;
 
-	console.log('render card in hadn the first time', roomData.myDeck);
-	console.log(roomData.myDeck);
-	roomData.myDeck.forEach((i) => {
-		const card = createCard(i);
-		myCards.appendChild(card);
-	});
+		// myTurn = me.appendChild(document.createElement('div'));
+		// myTurn.className = 'my-turn-div'; 
 
-	const myEnergy = me.appendChild(document.createElement('div'));
-	myEnergy.className = 'my-energy-div';
-	myEnergy.textContent = '';
+		myHealth.textContent = 'health: ' + roomData.users.firstPlayer.health;
 
-	const cards = [...document.querySelectorAll('.card')];
+		// myCards = me.appendChild(document.createElement('div'));
+		// myCards.className = 'my-cards-div';
 
-	let isActive = false;
-	let cardId = null;
-	let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
-		method: 'GET',
-	});
-	const json = await response_turn.json();
-	if (json.yourMove) {
-		finishButton.style.disabled = 'false';
-		cards.forEach((card) => {
-			card.addEventListener('click', () => {
-				if (!isActive) {
-					card.style.border = '5px solid red';
-					isActive = true;
-					myField.style.border = '5px solid red';
-					myField.addEventListener('click', async () => {
+		// myCards.innerHTML = '';
+		
+		// roomData.myDeck.forEach((i) => {
+		// 	const card = createCard(i);
+		// 	myCards.appendChild(card);
+		// });
+
+		myEnergy = me.appendChild(document.createElement('div'));
+		myEnergy.className = 'my-energy-div';
+		myEnergy.textContent = '';
+
+		const cards = [...document.querySelectorAll('.card')];
+		
+		let isActive = false;
+		let cardId = null;
+		let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
+			method: 'GET',
+		});
+		const json = await response_turn.json();
+		if (json.yourMove) {
+			myTurn.textContent = 'it`s my turn';
+			// finishButton.disabled = 'false';
+			cards.forEach((card, index) => {
+				card.addEventListener('click', async () => {
+					if (!isActive) {
+						card.style.border = '5px solid red';
+						isActive = true;
+						myField.style.border = '5px solid red';
+						myField.addEventListener('click', async () => {
 						if (isActive) {
 							cardId = card.id * 1;
 							await cardOnTablePost(cardId);
@@ -229,16 +242,20 @@ async function battle() {
 							card.remove();
 							roomData.myDeck = await cardInHandGet();
 						}
-					});
-				} else {
-					card.style.border = 'none';
-					isActive = false;
-					myField.style.border = 'none';
-				}
+						});
+					} else {
+						card.style.border = 'none';
+						isActive = false;
+						myField.style.border = 'none';
+					}
+				});
 			});
-		});
-	}
-	socket.on('render_table_from_server', async () => {
+			
+		}
+		else {
+			myTurn.textContent = 'it`s not my turn';
+		}
+
 		roomData.cardsOnTable = await cardOnTableGet();
 		let myCard = roomData.cardsOnTable.filter((card) => {
 			return card.player_id === roomData.users.firstPlayer.id;
@@ -250,60 +267,48 @@ async function battle() {
 		opponentField.innerHTML = '';
 
 		myCard.forEach((i) => {
-			const card = document.createElement('div');
-			card.id = i.Card.id;
-			card.className = 'card';
-			const title = card.appendChild(document.createElement('p'));
-			title.className = 'card-name';
-			title.textContent = i.Card.title;
-			const photo = card.appendChild(document.createElement('div'));
-			photo.style.backgroundImage = 'url(' + i.Card.image + ')';
-			photo.className = 'photo';
-			const description = card.appendChild(document.createElement('div'));
-			description.className = 'description';
-			description.textContent = i.Card.description;
-			const damage = card.appendChild(document.createElement('p'));
-			damage.className = 'damage';
-			damage.textContent = 'damage: ' + i.Card.damage;
-			const defence = card.appendChild(document.createElement('p'));
-			defence.className = 'defence';
-			defence.textContent = 'defence: ' + i.Card.defence;
-			const cost = card.appendChild(document.createElement('p'));
-			cost.className = 'cost';
-			cost.textContent = 'cost: ' + i.Card.cost;
+			const card = createObjectsCard(i);
 			myField.appendChild(card);
 		});
 		enemyCard.forEach((i) => {
-			const card = document.createElement('div');
-			card.className = 'card';
-			card.id = i.Card.id;
-			const title = card.appendChild(document.createElement('p'));
-			title.className = 'card-name';
-			title.textContent = i.Card.title;
-			const photo = card.appendChild(document.createElement('div'));
-			photo.style.backgroundImage = 'url(' + i.Card.image + ')';
-			photo.className = 'photo';
-			const description = card.appendChild(document.createElement('div'));
-			description.className = 'description';
-			description.textContent = i.Card.description;
-			const damage = card.appendChild(document.createElement('p'));
-			damage.className = 'damage';
-			damage.textContent = 'damage: ' + i.Card.damage;
-			const defence = card.appendChild(document.createElement('p'));
-			defence.className = 'defence';
-			defence.textContent = 'defence: ' + i.Card.defence;
-			const cost = card.appendChild(document.createElement('p'));
-			cost.className = 'cost';
-			cost.textContent = 'cost: ' + i.Card.cost;
+			const card = createObjectsCard(i);
 			opponentField.appendChild(card);
 		});
 	});
 	
 	
 	finishButton.addEventListener('click', async (btn) => {
-		await movePost();
+		let ifChange = await movePost();
+		console.log(ifChange);
 		await cardInHandPost();
 	});
+}
+
+
+
+function createObjectsCard(i) {
+	const card = document.createElement('div');
+	card.className = 'card';
+	card.id = i.Card.id;
+	const title = card.appendChild(document.createElement('p'));
+	title.className = 'card-name';
+	title.textContent = i.Card.title;
+	const photo = card.appendChild(document.createElement('div'));
+	photo.style.backgroundImage = 'url(' + i.Card.image + ')';
+	photo.className = 'photo';
+	const description = card.appendChild(document.createElement('div'));
+	description.className = 'description';
+	description.textContent = i.Card.description;
+	const damage = card.appendChild(document.createElement('p'));
+	damage.className = 'damage';
+	damage.textContent = 'damage: ' + i.Card.damage;
+	const defence = card.appendChild(document.createElement('p'));
+	defence.className = 'defence';
+	defence.textContent = 'defence: ' + i.Card.defence;
+	const cost = card.appendChild(document.createElement('p'));
+	cost.className = 'cost';
+	cost.textContent = 'cost: ' + i.Card.cost;
+	return card;
 }
 
 function createCard(i) {
@@ -375,6 +380,93 @@ async function movePost() {
 		headers: {
 			'Content-Type': 'application/json',
 		},
+		body: {},
+
 	});
+	const json = await res.json();
+	return (roomData.myDeck = JSON.parse(JSON.stringify(json)));
 }
 
+
+
+async function renderAll() {
+	myOpponentHealth.textContent = 'health: ' + roomData.users.secondPlayer.health;
+
+	myTurn = me.appendChild(document.createElement('div'));
+	myTurn.className = 'my-turn-div'; 
+
+	myHealth.textContent = 'health: ' + roomData.users.firstPlayer.health;
+
+	myCards = me.appendChild(document.createElement('div'));
+	myCards.className = 'my-cards-div';
+
+	myCards.innerHTML = '';
+
+	roomData.myDeck.forEach((i) => {
+		const card = createCard(i);
+		myCards.appendChild(card);
+	});
+
+	myEnergy = me.appendChild(document.createElement('div'));
+	myEnergy.className = 'my-energy-div';
+	myEnergy.textContent = '';
+
+	const cards = [...document.querySelectorAll('.card')];
+	
+	let isActive = false;
+	let cardId = null;
+	let response_turn = await fetch(`http://127.0.0.1:3000/isMyTurn/${roomData.tableId}`, {
+		method: 'GET',
+	});
+	const json = await response_turn.json();
+	if (json.yourMove) {
+		myTurn.textContent = 'it`s my turn';
+		// finishButton.disabled = 'false';
+		cards.forEach((card, index) => {
+			card.addEventListener('click', async () => {
+				if (!isActive) {
+					card.style.border = '5px solid red';
+					isActive = true;
+					myField.style.border = '5px solid red';
+					myField.addEventListener('click', async () => {
+					if (isActive) {
+						cardId = card.id * 1;
+						await cardOnTablePost(cardId);
+						socket.emit('render_table', roomData.roomNo);
+						myField.innerHTML = '';
+						card.remove();
+						roomData.myDeck = await cardInHandGet();
+					}
+					});
+				} else {
+					card.style.border = 'none';
+					isActive = false;
+					myField.style.border = 'none';
+				}
+			});
+		});
+		  
+	}
+	else {
+		myTurn.textContent = 'it`s not my turn';
+	}
+
+	roomData.cardsOnTable = await cardOnTableGet();
+	let myCard = roomData.cardsOnTable.filter((card) => {
+		return card.player_id === roomData.users.firstPlayer.id;
+	});
+	let enemyCard = roomData.cardsOnTable.filter((card) => {
+		return card.player_id === roomData.users.secondPlayer.id;
+	});
+	myField.innerHTML = '';
+	opponentField.innerHTML = '';
+
+	myCard.forEach((i) => {
+		const card = createObjectsCard(i);
+		myField.appendChild(card);
+	});
+	enemyCard.forEach((i) => {
+		const card = createObjectsCard(i);
+		opponentField.appendChild(card);
+	});
+}
