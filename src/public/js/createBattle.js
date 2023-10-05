@@ -311,13 +311,17 @@ async function battle() {
 		const mainOpponentAttack = document.querySelector('.opponent-attack-button');
 		mainOpponentAttack.addEventListener('click', async () => {
 			const temp = await cardAttackMainPost();
-			console.log(temp);
+			
 			// roomData.users.secondPlayer.health = temp.enemyHP;
 			// myOpponentHealth.textContent = roomData.users.secondPlayer.health;
 			socket.emit('render_hp', roomData.roomNo);
-
+			// const t = 
+			// console.log(t);
 
 		});
+		socket.on('render_hp_from_server', async () => {
+			await healthGet();
+		} )
 	});
 
 	finishButton.addEventListener('click', async (btn) => {
@@ -491,6 +495,16 @@ async function MovesLeft() {
 	});
 	const json = await res.json();
 	return JSON.parse(JSON.stringify(json)).movesLeft;
+}
+async function healthGet() {
+	const res = await fetch(`http://127.0.0.1:3000/etMyHp${roomData.tableId}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+	const json = await res.json();
+	return JSON.parse(JSON.stringify(json));
 }
 
 // async function movePost() {
