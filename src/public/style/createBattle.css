@@ -245,3 +245,9 @@ body {
     background-color: bisque;
     align-items: center;
 }
+
+.img {
+    width: 65px;
+    height: 100px;
+    border-radius: 0 0 15px 15px ;
+}

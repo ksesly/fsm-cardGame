@@ -122,7 +122,7 @@ switchBtn.addEventListener('click', () => {
 			});
 
 		// console.log(roomData.users);
-		let countdown = 2;
+		let countdown = 5;
 
 		// may create a funct later
 
@@ -378,8 +378,11 @@ function createObjectsCard(i, num) {
 	title.className = 'card-name';
 	title.textContent = i.Card.title;
 	const photo = card.appendChild(document.createElement('div'));
-	photo.style.backgroundImage = 'url(' + i.Card.image + ')';
+	// photo.style.backgroundImage = 'url(' + i.Card.image + ')';
+	const img = photo.appendChild(document.createElement('img'));
+	img.setAttribute('src', `${i.Card.image}`);
 	photo.className = 'photo';
+	img.className = 'img';
 	const description = card.appendChild(document.createElement('div'));
 	description.className = 'description';
 	description.textContent = i.Card.description;
@@ -417,6 +420,9 @@ function createCard(i) {
 	const photo = card.appendChild(document.createElement('div'));
 	photo.style.backgroundImage = 'url(' + i.image + ')';
 	photo.className = 'photo';
+	const img = photo.appendChild(document.createElement('img'));
+	img.setAttribute('src', `${i.image}`);
+	img.className = 'img';
 	const description = card.appendChild(document.createElement('div'));
 	description.className = 'description';
 	description.textContent = i.description;
