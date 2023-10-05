@@ -246,10 +246,10 @@ function battle() {
 					await cardOnTablePost(cardId);
 					roomData.cardsOnTable = await cardOnTableGet();
 					console.log(roomData.cardsOnTable);
-					// roomData.cardsOnTable.forEach(i => {
-					// 	const card = createCard(i);
-					// 	myCardsOnTableDiv.appendChild(card);
-					// });
+					roomData.cardsOnTable.forEach(i => {
+						const card = createCard(i);
+						myCardsOnTableDiv.appendChild(card);
+					});
 				})
 			}
 			else {
@@ -312,7 +312,5 @@ async function cardOnTablePost(id) {
 		},
 		body: JSON.stringify({ cardId: id }),
 	});
-	// const json = await response.json();
-	// return roomData.cardsOnTable = JSON.parse(JSON.stringify(json));
 }
 

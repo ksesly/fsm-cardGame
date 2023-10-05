@@ -102,6 +102,7 @@ body {
     height: 531px;
     display: flex;
     justify-content: center;
+    flex-direction: column;
 }
 .playing-board:not(.finish-button, .my-energy-div) {
     align-items: center;

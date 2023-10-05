@@ -113,11 +113,7 @@ router
 				card_id: playerHandCard.card_id,
 			});
 
-			await PlayerHand.destroy({
-				where: {
-					id: playerHandCard.id,
-				},
-			});
+			await playerHandCard.destroy();
 
 			res.status(200).json({ message: 'Card placed on the table successfully', newCard });
 		} catch (error) {
